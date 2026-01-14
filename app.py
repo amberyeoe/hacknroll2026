@@ -1,12 +1,44 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, g
+import sqlite3
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user                      
 
 app = Flask(__name__)
 
+DATABASE = "database.db"
+
+def get_db():
+    db = getattr(g, "_database", None)
+    if db is None:
+        db = g._database = sqlite3.connect(DATABASE)
+        db.row_factory = sqlite3.Row
+    return db
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, "_database", None)
+    if db is not None:
+        db.close()
+
+
+
+def create_tables():
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    """)
+    db.commit()
+
+
+#ROUTES
 # check
 @app.route("/") 
-def getindex():
-    return render_template("base.html");
+def base():
+    return render_template("base.html")
 
 # @app.route("/")
 # def home():
@@ -18,6 +50,13 @@ def getindex():
 # login_manager.init_app(app)
 # login_manager.login_view = "login"
 
+@app.route("/home")
+def home():
+    return render_template("home.html")
+
+@app.route("/register")
+def register():
+    return render_template("register.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -27,7 +66,7 @@ def login():
         # Here you would normally verify the username and password
         user = User(username)
         login_user(user)
-        return redirect(url_for("getindex"))
+        return redirect(url_for("base"))
     return render_template("login.html")
 
 

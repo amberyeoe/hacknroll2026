@@ -16,9 +16,15 @@
 
 <body>
   {% block navbar %}
+  <nav>
+    <a href="{{ url_for('home') }}">home</a>
+    <a href="{{ url_for('login') }}">Login</a>
+  </nav>
   {% endblock %}
 
   {% block content %}
+  <h2>hello test</h2>
+
   {% endblock %}
 
   {% block scripts %}
