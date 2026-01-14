@@ -1,16 +1,3 @@
-<<<<<<< Updated upstream
-from flask import Flask, render_template
-
-app = Flask(__name__)
-
-@app.route("/")
-def home():
-    return render_template("base.html")
-
-@app.route("/home")
-def home():
-    return render_template("home.html")
-=======
 from flask import Flask, render_template, request, url_for, redirect
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user                      
 
@@ -65,7 +52,6 @@ def tracker():
 @app.route("/workout")
 def workout():
     return render_template("workout.html")
->>>>>>> Stashed changes
 
 if __name__ == "__main__":
     app.run(debug=True)
