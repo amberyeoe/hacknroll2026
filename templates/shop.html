@@ -1,81 +1,134 @@
-<div class="shop-grid">
+{% extends "base.html" %}
 
-  <div class="item-card">
-    <div class="item-top">
-      <div class="item-icon" aria-hidden="true"></div>
-      <div class="item-info">
-        <div class="item-name">Headband</div>
-      </div>
+{% block title %}Shop{% endblock %}
+
+{# Remove this block if base.html already links styles.css #}
+{% block css %}
+<link rel="stylesheet" href="../static/styles.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="page">
+
+  <!-- Top row: title left, credits right -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1 class="h1">Shop</h1>
+      <div class="muted">Spend credits to buy and equip cosmetics.</div>
     </div>
-    <div class="item-bottom">
-      <div class="item-price">50 credits</div>
-      <button class="btn btn-sm btn-primary" type="button">Buy</button>
+
+    <div class="credits-pill">
+      Credits: <b>{{ credits }}</b>
     </div>
   </div>
 
-  <div class="item-card">
-    <div class="item-top">
-      <div class="item-icon" aria-hidden="true"></div>
-      <div class="item-info">
-        <div class="item-name">Headphones</div>
+  <!-- Centered avatar section (badge + avatar based on latest score tier) -->
+  <div class="avatar-section">
+    <div class="avatar-card">
+
+      <div class="tier-badge tier-badge--{{ tier|lower }}">
+        {{ tier }}
       </div>
-    </div>
-    <div class="item-bottom">
-      <div class="item-price">180 credits</div>
-      <button class="btn btn-sm btn-primary" type="button">Buy</button>
+
+      <div class="avatar avatar--{{ tier|lower }}" title="Avatar"></div>
+
+      <div class="muted center">
+        Latest score: <b>{{ latest_score }}</b>
+      </div>
     </div>
   </div>
 
-  <div class="item-card">
-    <div class="item-top">
-      <div class="item-icon" aria-hidden="true"></div>
-      <div class="item-info">
-        <div class="item-name">Wristband</div>
+  <div class="section-title">Items</div>
+
+  <!-- Compact shop grid (6 items hardcoded for now) -->
+  <div class="shop-grid">
+
+    <div class="item-card">
+      <div class="item-top">
+        <div class="item-icon" aria-hidden="true"></div>
+        <div class="item-info">
+          <div class="item-name">Headband</div>
+        </div>
+      </div>
+      <div class="item-bottom">
+        <div class="item-price">50 credits</div>
+        <button class="btn btn-sm btn-primary" type="button">Buy</button>
       </div>
     </div>
-    <div class="item-bottom">
-      <div class="item-price">60 credits</div>
-      <button class="btn btn-sm btn-primary" type="button">Buy</button>
+
+    <div class="item-card">
+      <div class="item-top">
+        <div class="item-icon" aria-hidden="true"></div>
+        <div class="item-info">
+          <div class="item-name">Headphones</div>
+        </div>
+      </div>
+      <div class="item-bottom">
+        <div class="item-price">180 credits</div>
+        <button class="btn btn-sm btn-primary" type="button">Buy</button>
+      </div>
     </div>
+
+    <div class="item-card">
+      <div class="item-top">
+        <div class="item-icon" aria-hidden="true"></div>
+        <div class="item-info">
+          <div class="item-name">Wristband</div>
+        </div>
+      </div>
+      <div class="item-bottom">
+        <div class="item-price">60 credits</div>
+        <button class="btn btn-sm btn-primary" type="button">Buy</button>
+      </div>
+    </div>
+
+    <div class="item-card">
+      <div class="item-top">
+        <div class="item-icon" aria-hidden="true"></div>
+        <div class="item-info">
+          <div class="item-name">Sports Watch</div>
+        </div>
+      </div>
+      <div class="item-bottom">
+        <div class="item-price">220 credits</div>
+        <button class="btn btn-sm btn-primary" type="button">Buy</button>
+      </div>
+    </div>
+
+    <div class="item-card">
+      <div class="item-top">
+        <div class="item-icon" aria-hidden="true"></div>
+        <div class="item-info">
+          <div class="item-name">Nike T-Shirt</div>
+        </div>
+      </div>
+      <div class="item-bottom">
+        <div class="item-price">140 credits</div>
+        <button class="btn btn-sm btn-primary" type="button">Buy</button>
+      </div>
+    </div>
+
+    <div class="item-card">
+      <div class="item-top">
+        <div class="item-icon" aria-hidden="true"></div>
+        <div class="item-info">
+          <div class="item-name">Nike Singlet</div>
+        </div>
+      </div>
+      <div class="item-bottom">
+        <div class="item-price">130 credits</div>
+        <button class="btn btn-sm btn-primary" type="button">Buy</button>
+      </div>
+    </div>
+
   </div>
 
-  <div class="item-card">
-    <div class="item-top">
-      <div class="item-icon" aria-hidden="true"></div>
-      <div class="item-info">
-        <div class="item-name">Sports Watch</div>
-      </div>
-    </div>
-    <div class="item-bottom">
-      <div class="item-price">220 credits</div>
-      <button class="btn btn-sm btn-primary" type="button">Buy</button>
-    </div>
-  </div>
 
-  <div class="item-card">
-    <div class="item-top">
-      <div class="item-icon" aria-hidden="true"></div>
-      <div class="item-info">
-        <div class="item-name">Nike T-Shirt</div>
-      </div>
-    </div>
-    <div class="item-bottom">
-      <div class="item-price">140 credits</div>
-      <button class="btn btn-sm btn-primary" type="button">Buy</button>
-    </div>
-  </div>
-
-  <div class="item-card">
-    <div class="item-top">
-      <div class="item-icon" aria-hidden="true"></div>
-      <div class="item-info">
-        <div class="item-name">Nike Singlet</div>
-      </div>
-    </div>
-    <div class="item-bottom">
-      <div class="item-price">130 credits</div>
-      <button class="btn btn-sm btn-primary" type="button">Buy</button>
-    </div>
+  <div class="mt">
+    <a class="btn btn-sm btn-ghost" href="/home">Back</a>
   </div>
 
 </div>
+
+{% endblock %}
