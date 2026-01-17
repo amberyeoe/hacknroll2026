@@ -48,6 +48,8 @@ def close_connection(exception):
 def create_tables():
     db = get_db()
     cursor = db.cursor()
+
+     # Users table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,6 +57,34 @@ def create_tables():
             password TEXT NOT NULL
         )
     """)
+     # PROFILES TABLE (one profile per user, use user_id as primary key)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS profiles (
+            user_id INTEGER PRIMARY KEY,
+            points INTEGER DEFAULT 0,
+            dob DATE,
+            goal TEXT,
+            next_ippt DATE,
+            prev_ippt_score INTEGER,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    """)
+
+    # WORKOUT TRACKING TABLE (multiple submissions per user)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS workout_tracking (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            pushup INTEGER,
+            situp INTEGER,
+            run REAL,
+            score INTEGER,
+            date_submitted DATE,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    """)
+
+
     db.commit()
 
 
@@ -144,10 +174,25 @@ def tracker():
 def workout():
     return render_template("workout.html")
 
+@app.route("/onboarding")
+@login_required
+def onboarding():
+    return render_template("onboarding.html")
+
 @app.route("/leaderboard")
 @login_required
 def leaderboard():
-    return render_template("leaderboard.html")
+    db = get_db()
+    # Get all users and points, sorted descending
+    users_points = db.execute("""
+        SELECT users.username, profiles.points
+        FROM profiles
+        JOIN users ON profiles.user_id = users.id
+        ORDER BY profiles.points DESC
+    """).fetchall()
+
+    return render_template("leaderboard.html", users_points=users_points)
+
 
 @app.route("/profile")
 @login_required
