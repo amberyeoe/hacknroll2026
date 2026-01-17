@@ -8,110 +8,144 @@
 {% endblock %}
 
 {% block content %}
-{# viewer_username is the logged-in user's username.
-   viewer_xp + viewer_rank are optional but recommended for accuracy if users_points is only "top N". #}
 
-{% set ns = namespace(in_board=false, rank=None, xp=viewer_xp if viewer_xp is defined else None) %}
-{% if viewer_username is defined %}
-  {% for u in users_points %}
-    {% if u['username'] == viewer_username %}
-      {% set ns.in_board = true %}
+{# ---------- Demo data (used only if users_points is empty / not provided) ---------- #}
+{% set sample_users_points = [
+  {"username":"Kai", "xp":12850},
+  {"username":"Alya", "xp":12110},
+  {"username":"Rafi", "xp":11840},
+  {"username":"Jin", "xp":11002},
+  {"username":"Mina", "xp":10775},
+  {"username":"Arjun", "xp":10320},
+  {"username":"Sofia", "xp":9920},
+  {"username":"Ethan", "xp":9655},
+  {"username":"Nur", "xp":9421},
+  {"username":"Hana", "xp":9170},
+  {"username":"Ben", "xp":8899},
+  {"username":"Ivy", "xp":8620},
+  {"username":"Zack", "xp":8350},
+  {"username":"Liam", "xp":8012},
+  {"username":"Aisha", "xp":7840},
+  {"username":"Ryan", "xp":7605},
+  {"username":"Chloe", "xp":7333},
+  {"username":"Darren", "xp":7050},
+  {"username":"Mei", "xp":6842},
+  {"username":"Farhan", "xp":6501}
+] %}
+
+{# Decide what to render #}
+{% set display_users = users_points if users_points is defined and users_points else sample_users_points %}
+
+{# ---------- Viewer detection (for highlight + “your rank” card) ---------- #}
+{% set ns = namespace(in_list=false, rank=None, xp=None) %}
+{% if viewer_username is defined and viewer_username %}
+  {% for u in display_users %}
+    {% if u["username"] == viewer_username %}
+      {% set ns.in_list = true %}
       {% set ns.rank = loop.index %}
-      {% set ns.xp = u['xp'] %}
+      {% set ns.xp = u["xp"] %}
     {% endif %}
   {% endfor %}
 {% endif %}
 
-<section class="lb-page">
-  <div class="lb-board">
-
-    <div class="lb-titlePill">LEADERBOARD</div>
-
-    <div class="lb-frame">
-      <div class="lb-inner">
-
-        <div class="lb-headerRow">
-          <div class="lb-h-rank">#</div>
-          <div class="lb-h-user">Name</div>
-          <div class="lb-h-xp">XP</div>
-        </div>
-
-        <div class="lb-rows" role="region" aria-label="Leaderboard list" tabindex="0">
-          {% for user in users_points %}
-          <div class="lb-row
-                      {% if loop.index <= 3 %} is-top{% endif %}
-                      {% if viewer_username is defined and user['username'] == viewer_username %} is-viewer{% endif %}">
-            <div class="lb-rank">
-              {% if loop.index == 1 %}
-                <span class="medal medal--gold" title="1st">1</span>
-              {% elif loop.index == 2 %}
-                <span class="medal medal--silver" title="2nd">2</span>
-              {% elif loop.index == 3 %}
-                <span class="medal medal--bronze" title="3rd">3</span>
-              {% else %}
-                <span class="rankNum">{{ loop.index }}</span>
-              {% endif %}
-            </div>
-
-            <div class="lb-user">
-              <span class="avatar" aria-hidden="true">👤</span>
-              <span class="name" title="{{ user['username'] }}">{{ user['username'] }}</span>
-            </div>
-
-            <div class="lb-xp">
-              <span class="xpVal">{{ user['xp'] }}</span>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-
-      </div>
+<section class="lb">
+  <header class="lb__header">
+    <div>
+      <h1 class="lb__title">Leaderboard</h1>
+      <p class="lb__subtitle">Climb the ranks by earning XP</p>
     </div>
+  </header>
 
-    {# If viewer not in list, show their placing below #}
-    {% if viewer_username is defined and not ns.in_board %}
-      <div class="lb-yourCard">
-        <div class="lb-yourTitle">Your placing</div>
-
-        <div class="lb-row lb-row--your">
-          <div class="lb-rank">
-            <span class="rankNum">
-              {% if viewer_rank is defined and viewer_rank %}
-                {{ viewer_rank }}
-              {% else %}
-                —
-              {% endif %}
-            </span>
+  {# Top 3 podium (from display_users) #}
+  {% if display_users and display_users|length > 0 %}
+  <div class="podium" aria-label="Top 3">
+    {% for place in (2, 1, 3) %}
+      {% if display_users|length >= place %}
+        {% set u = display_users[place-1] %}
+        <article class="podium__slot podium__slot--{{ place }}">
+          <div class="podium__medal" aria-hidden="true">
+            {% if place == 1 %}🥇{% elif place == 2 %}🥈{% else %}🥉{% endif %}
           </div>
+          <div class="podium__place">#{{ place }}</div>
+          <div class="podium__user" title="{{ u['username'] }}">{{ u['username'] }}</div>
+          <div class="podium__xp">{{ u['xp'] }} <span>XP</span></div>
+        </article>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
 
-          <div class="lb-user">
-            <span class="avatar" aria-hidden="true">👤</span>
-            <span class="name">{{ viewer_username }}</span>
-          </div>
+  {# Main leaderboard table #}
+  <div class="lb__card">
+    <div class="lb__tableWrap" role="region" aria-label="Leaderboard table" tabindex="0">
+      <table class="lb__table">
+        <thead>
+          <tr>
+            <th scope="col">Rank</th>
+            <th scope="col">Username</th>
+            <th scope="col" class="is-right">XP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in display_users %}
+          <tr class="
+            {% if loop.index <= 3 %}is-top{% endif %}
+            {% if viewer_username is defined and user['username'] == viewer_username %}is-viewer{% endif %}
+          ">
+            <td class="rank">
+              <span class="rank__badge
+                {% if loop.index == 1 %}rank__badge--gold
+                {% elif loop.index == 2 %}rank__badge--silver
+                {% elif loop.index == 3 %}rank__badge--bronze
+                {% else %}rank__badge--base
+                {% endif %}">
+                {{ loop.index }}
+              </span>
+            </td>
+            <td class="user">
+              <span class="user__name">{{ user['username'] }}</span>
+            </td>
+            <td class="xp is-right">
+              <span class="xp__value">{{ user['xp'] }}</span>
+              <span class="xp__label">XP</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-          <div class="lb-xp">
-            <span class="xpVal">
-              {% if ns.xp is not none %}
-                {{ ns.xp }}
-              {% elif viewer_xp is defined and viewer_xp is not none %}
-                {{ viewer_xp }}
-              {% else %}
-                —
-              {% endif %}
-            </span>
-          </div>
+  {# If viewer is NOT on the shown leaderboard, show their placing below #}
+  {% if viewer_username is defined and viewer_username and not ns.in_list %}
+    {% set your_rank = viewer_rank if viewer_rank is defined else None %}
+    {% set your_xp = viewer_xp if viewer_xp is defined else None %}
+
+    <div class="lb__yourCard" role="note" aria-label="Your placing">
+      <div class="lb__yourHeader">
+        <div class="lb__yourTitle">Your rank</div>
+        <div class="lb__yourSub">Shown when you’re not in the displayed leaderboard</div>
+      </div>
+
+      <div class="lb__yourRow">
+        <div class="lb__yourRank">
+          <span class="rank__badge rank__badge--base">
+            {% if your_rank %}{{ your_rank }}{% else %}—{% endif %}
+          </span>
         </div>
-
-        <div class="lb-yourHint">
-          {% if viewer_rank is defined and viewer_rank %}
-            You are currently ranked <b>#{{ viewer_rank }}</b>.
-          {% else %}
-            Pass <code>viewer_rank</code> from your backend to show your exact rank even if you only render top N here.
-          {% endif %}
+        <div class="lb__yourName">{{ viewer_username }}</div>
+        <div class="lb__yourXP">
+          <span class="xp__value">{% if your_xp is not none %}{{ your_xp }}{% else %}—{% endif %}</span>
+          <span class="xp__label">XP</span>
         </div>
       </div>
-    {% endif %}
 
-  </div>
+      {% if not your_rank %}
+        <div class="lb__yourHint">
+          Tip: pass <code>viewer_rank</code> from your backend (needed if you only render “top N”).
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
 </section>
 {% endblock %}
