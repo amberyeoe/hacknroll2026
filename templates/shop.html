@@ -15,8 +15,19 @@
 
     <div class="topbar">
       <div class="topbar-center">
-        <h1 class="h1">Shop</h1>
-        <div class="muted">Spend credits to buy and equip cosmetics.</div>
+        <!-- ===== BANNER TITLE ===== -->
+        <div class="shop-banner" aria-label="Shop banner">
+          <img
+            class="shop-banner__img"
+            src="{{ url_for('static', filename='ui/shop_banner.png') }}"
+            alt=""
+            aria-hidden="true"
+          >
+          <div class="shop-banner__content">
+            <div class="shop-banner__title">SHOP</div>
+            <div class="shop-banner__subtitle">Spend credits to buy and equip cosmetics.</div>
+          </div>
+        </div>
       </div>
 
       <div class="credits-pill">
@@ -85,6 +96,7 @@
 
   </div>
 </div>
+
 {% block scripts %}
 <script>
   // ===== State =====
@@ -108,14 +120,13 @@
   }
 
   // ===== Avatar preview helper =====
-  // Since you only have ONE image element, we can only display ONE equipped image.
-  // We'll show the most recently equipped item. Buttons still support multi-equip.
+  // Only ONE image element -> show most recently equipped item.
   function syncAvatarPreview(preferUrl) {
     if (preferUrl && equippedItems.has(preferUrl)) {
       mainAvatar.src = preferUrl;
       return;
     }
-    const any = equippedItems.values().next().value; // first equipped
+    const any = equippedItems.values().next().value;
     mainAvatar.src = any ? any : baseAvatarUrl;
   }
 
@@ -156,8 +167,8 @@
         creditsDisplay.innerText = currentCredits;
 
         ownedItems.add(itemUrl);
-        equippedItems.add(itemUrl);     // <-- key change
-        syncAvatarPreview(itemUrl);     // show newly equipped
+        equippedItems.add(itemUrl);
+        syncAvatarPreview(itemUrl);
         updateButtons();
         return;
       }
@@ -165,7 +176,6 @@
       // B) Toggle EQUIP / UNEQUIP (multi-equip)
       if (equippedItems.has(itemUrl)) {
         equippedItems.delete(itemUrl);
-        // if you unequipped the currently shown image, show another equipped or base
         if (mainAvatar.src.includes(itemUrl)) {
           syncAvatarPreview(null);
         }
@@ -182,4 +192,5 @@
   updateButtons();
 </script>
 {% endblock %}
+
 {% endblock %}
