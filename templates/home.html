@@ -3,8 +3,9 @@
 {% block title %}Home{% endblock %}
 
 {% block css %}
+<link rel="stylesheet" href="../static/dashboard.css">
+{% endblock %}
 
-<link rel="stylesheet" href="../static/dashboard.css">{% endblock %}
 {% block content %}
 <div class="dash-wrap">
   <div class="dash">
@@ -78,11 +79,38 @@
     <!-- RIGHT -->
     <aside class="dash-right">
       <div class="avatar-frame">
+
+        {# -------- Badge logic (based on score) -------- #}
+        {% set score_val = (score | default(0)) | int %}
+        {% set badge_file = none %}
+
+        {# <51 = no badge #}
+        {% if score_val >= 85 %}
+          {% set badge_file = 'gold.jpg' %}
+        {% elif score_val >= 75 %}
+          {% set badge_file = 'silver.jpg' %}
+        {% elif score_val >= 61 %}
+          {% set badge_file = 'bronze.jpg' %}
+        {% elif score_val >= 51 %}
+          {% set badge_file = 'pass.jpg' %} {# your "white" badge #}
+        {% endif %}
+        {# --------------------------------------------- #}
+
         {% if avatar_url %}
           <img src="{{ avatar_url }}" alt="Avatar" class="avatar-img">
         {% else %}
           <div class="avatar-placeholder">AVATAR</div>
         {% endif %}
+
+        {# Badge overlay image (separate element, on top-right) #}
+        {% if badge_file %}
+          <img
+            src="{{ url_for('static', filename='home_backgrnd/' ~ badge_file) }}"
+            alt="IPPT badge"
+            class="ippt-badge"
+          >
+        {% endif %}
+
       </div>
     </aside>
 
