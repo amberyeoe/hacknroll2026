@@ -1,16 +1,135 @@
 {% extends "base.html" %}
 
-{% block title %}
-workout
-{% endblock %}
+{% block title %}Workout{% endblock %}
+
+{% block css %}
+
+<link rel="stylesheet" href="../static/workout.css">{% endblock %}
 
 {% block content %}
+<div class="workout-page">
 
-   
-    
-    <h1>welcome to workout</h1>
-    <a href= "{{ url_for('home') }}">home</a>
-   
+  <div class="topbar">
+    <h1 class="page-title">Log Workout</h1>
+    <a class="home-link" href="{{ url_for('home') }}">home</a>
+  </div>
 
+  <form class="workout-form" method="POST" action="">
+    <!-- Push-ups -->
+    <section class="card">
+      <div class="card-row">
+        <div class="left">
+          <button type="button" class="action-btn" id="btn-pushups">
+            START PUSH-UPS
+          </button>
+          <p class="hint">After you finish, key in your reps.</p>
+        </div>
 
+        <div class="right">
+          <input
+            class="big-input"
+            type="number"
+            name="pushups"
+            id="pushups"
+            min="0"
+            placeholder="0"
+            inputmode="numeric"
+          >
+          <div class="big-label">push-ups</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sit-ups -->
+    <section class="card">
+      <div class="card-row">
+        <div class="left">
+          <button type="button" class="action-btn" id="btn-situps">
+            START SIT-UPS
+          </button>
+          <p class="hint">After you finish, key in your reps.</p>
+        </div>
+
+        <div class="right">
+          <input
+            class="big-input"
+            type="number"
+            name="situps"
+            id="situps"
+            min="0"
+            placeholder="0"
+            inputmode="numeric"
+          >
+          <div class="big-label">sit-ups</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2.4KM Run -->
+    <section class="card">
+      <div class="card-row">
+        <div class="left">
+          <button type="button" class="action-btn secondary" id="btn-run">
+            START 2.4KM RUN
+          </button>
+          <p class="hint">Enter your timing (mm:ss).</p>
+        </div>
+
+        <div class="right">
+          <div class="time-input">
+            <input
+              class="time-box"
+              type="number"
+              name="run_min"
+              id="run_min"
+              min="0"
+              placeholder="14"
+              inputmode="numeric"
+            >
+            <span class="time-sep">:</span>
+            <input
+              class="time-box"
+              type="number"
+              name="run_sec"
+              id="run_sec"
+              min="0"
+              max="59"
+              placeholder="40"
+              inputmode="numeric"
+            >
+          </div>
+          <div class="big-label">2.4km time</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Notes (optional) -->
+    <section class="card">
+      <label class="notes-label" for="notes">Notes (optional)</label>
+      <textarea class="notes" id="notes" name="notes" rows="3" placeholder="e.g. felt tired / windy / interval run"></textarea>
+    </section>
+
+    <!-- Save -->
+    <div class="save-row">
+      <button class="save-btn" type="submit">SAVE WORKOUT</button>
+    </div>
+  </form>
+
+</div>
+
+<script>
+  // Optional: these buttons can later open your timer pages / start flows.
+  // For now they just focus the inputs (nice UX).
+  document.getElementById("btn-pushups").addEventListener("click", () => {
+    document.getElementById("pushups").focus();
+  });
+
+  document.getElementById("btn-situps").addEventListener("click", () => {
+    document.getElementById("situps").focus();
+  });
+
+  document.getElementById("btn-run").addEventListener("click", () => {
+    document.getElementById("run_min").focus();
+  });
+</script>
 {% endblock %}

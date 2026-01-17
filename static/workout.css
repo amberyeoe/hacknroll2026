@@ -1,0 +1,186 @@
+.workout-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.home-link {
+  text-decoration: none;
+  color: #111;
+  font-weight: 700;
+}
+
+.workout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  border: 1px solid #e6e6e6;
+  border-radius: 16px;
+  padding: 16px;
+  background: #fff;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+.left {
+  flex: 1;
+  min-width: 200px;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 140px;
+}
+
+.action-btn {
+  width: 100%;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  padding: 14px 14px;
+  border-radius: 14px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
+.action-btn.secondary {
+  background: #fff;
+  color: #111;
+}
+
+.hint {
+  margin: 8px 0 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.big-input {
+  width: 120px;
+  text-align: right;
+  padding: 10px 12px;
+  font-size: 44px;
+  font-weight: 900;
+  border-radius: 14px;
+  border: 1px solid #e6e6e6;
+  outline: none;
+}
+
+.big-input:focus {
+  border-color: #111;
+}
+
+.big-label {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #666;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+/* Run time input (mm:ss) */
+.time-input {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.time-box {
+  width: 82px;
+  text-align: right;
+  padding: 10px 12px;
+  font-size: 44px;
+  font-weight: 900;
+  border-radius: 14px;
+  border: 1px solid #e6e6e6;
+  outline: none;
+}
+
+.time-box:focus {
+  border-color: #111;
+}
+
+.time-sep {
+  font-size: 44px;
+  font-weight: 900;
+  color: #111;
+}
+
+/* Notes */
+.notes-label {
+  display: block;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.notes {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid #e6e6e6;
+  padding: 12px;
+  font-size: 14px;
+  outline: none;
+  resize: vertical;
+}
+
+.notes:focus {
+  border-color: #111;
+}
+
+/* Save */
+.save-row {
+  margin-top: 6px;
+}
+
+.save-btn {
+  width: 100%;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  padding: 16px 14px;
+  border-radius: 16px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+}
+
+/* Mobile polish */
+@media (max-width: 520px) {
+  .card-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .right {
+    align-items: flex-end;
+    min-width: unset;
+  }
+
+  .big-input,
+  .time-box {
+    font-size: 40px;
+  }
+}
