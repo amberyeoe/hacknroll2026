@@ -8,13 +8,13 @@
     <tr>
         <th>Rank</th>
         <th>Username</th>
-        <th>Points</th>
+        <th>XP</th>
     </tr>
     {% for user in users_points %}
     <tr>
         <td>{{ loop.index }}</td> <!-- automatically gives 1, 2, 3... -->
         <td>{{ user['username'] }}</td>
-        <td>{{ user['points'] }}</td>
+        <td>{{ user['xp'] }}</td>
     </tr>
     {% endfor %}
 </table>
