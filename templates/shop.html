@@ -2,8 +2,8 @@
 
 {% block title %}Shop{% endblock %}
 
-{# Remove this block if base.html already links styles.css #}
 {% block css %}
+<!-- Correct Flask static path -->
 <link rel="stylesheet" href="../static/styles.css">
 {% endblock %}
 
@@ -23,7 +23,7 @@
     </div>
   </div>
 
-  <!-- Centered avatar section (badge + avatar based on latest score tier) -->
+  <!-- Centered avatar section -->
   <div class="avatar-section">
     <div class="avatar-card">
 
@@ -41,7 +41,7 @@
 
   <div class="section-title">Items</div>
 
-  <!-- Compact shop grid (6 items hardcoded for now) -->
+  <!-- Shop items (6 items, with secondary text) -->
   <div class="shop-grid">
 
     <div class="item-card">
@@ -49,6 +49,7 @@
         <div class="item-icon" aria-hidden="true"></div>
         <div class="item-info">
           <div class="item-name">Headband</div>
+          <div class="item-desc">Keeps sweat off</div>
         </div>
       </div>
       <div class="item-bottom">
@@ -62,6 +63,7 @@
         <div class="item-icon" aria-hidden="true"></div>
         <div class="item-info">
           <div class="item-name">Headphones</div>
+          <div class="item-desc">Workout soundtrack</div>
         </div>
       </div>
       <div class="item-bottom">
@@ -75,6 +77,7 @@
         <div class="item-icon" aria-hidden="true"></div>
         <div class="item-info">
           <div class="item-name">Wristband</div>
+          <div class="item-desc">Extra grip & comfort</div>
         </div>
       </div>
       <div class="item-bottom">
@@ -88,6 +91,7 @@
         <div class="item-icon" aria-hidden="true"></div>
         <div class="item-info">
           <div class="item-name">Sports Watch</div>
+          <div class="item-desc">Track your runs</div>
         </div>
       </div>
       <div class="item-bottom">
@@ -101,6 +105,7 @@
         <div class="item-icon" aria-hidden="true"></div>
         <div class="item-info">
           <div class="item-name">Nike T-Shirt</div>
+          <div class="item-desc">Classic training fit</div>
         </div>
       </div>
       <div class="item-bottom">
@@ -114,6 +119,7 @@
         <div class="item-icon" aria-hidden="true"></div>
         <div class="item-info">
           <div class="item-name">Nike Singlet</div>
+          <div class="item-desc">Lightweight & breathable</div>
         </div>
       </div>
       <div class="item-bottom">
@@ -123,7 +129,6 @@
     </div>
 
   </div>
-
 
   <div class="mt">
     <a class="btn btn-sm btn-ghost" href="/home">Back</a>
