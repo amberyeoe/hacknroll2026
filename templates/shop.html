@@ -5,7 +5,8 @@
 {% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 <style>
-  /* --- EXISTING STYLES --- */
+  /* --- INTERNAL STYLES FOR SHOP INTERACTIVITY --- */
+  
   .tile-img {
     width: 64px;
     height: 64px;
@@ -17,20 +18,6 @@
     margin-right: auto;
   }
 
-  .avatar-img {
-    width: 140px;
-    height: auto;
-    display: block;
-    margin: 0 auto 10px auto;
-    transition: 0.3s ease;
-  }
-  
-  .tile-inner {
-    padding-top: 10px;
-  }
-
-  /* --- NEW STYLES FOR BUTTONS & ERROR --- */
-  
   /* Different colors for button states */
   .buy-btn.owned {
     background-color: #4CAF50; /* Green for Equip */
@@ -72,157 +59,89 @@
 
 {% block content %}
 
-<div class="page">
+<div class="workout-bg">
 
-  <div id="error-toast" class="toast">Insufficient Credits!</div>
+  <div class="page">
 
-  <div class="topbar">
-    <div class="topbar-left">
-      <h1 class="h1">Shop</h1>
-      <div class="muted">Spend credits to buy and equip cosmetics.</div>
-    </div>
+    <div id="error-toast" class="toast">Insufficient Credits!</div>
 
-    <div class="credits-pill">
-      Credits: <b id="user-credits">{{ credits }}</b>
-    </div>
-  </div>
-
-  <div class="avatar-section">
-    <div class="avatar-card">
-
-      <div class="tier-badge tier-badge--{{ tier|lower }}">
-        {{ tier }}
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1 class="h1">Shop</h1>
+        <div class="muted">Spend credits to buy and equip cosmetics.</div>
       </div>
 
-      <img id="main-avatar" 
-           src="static/avatar/default.jpg" 
-           data-base-src="static/avatar/default.jpg"
-           class="avatar-img" 
-           alt="Your Avatar">
-
-      <div class="muted center">
-        Latest score: <b>{{ latest_score }}</b>
-      </div>
-    </div>
-  </div>
-
-  <div class="shop-header">
-    <div class="shop-header__title">SHOP</div>
-  </div>
-
-  <div class="shop-grid shop-grid--game">
-
-    <div class="shop-tile">
-      <div class="tile-inner">
-        <img src="static/items/headband.png" class="tile-img" alt="Headband">
-        <div class="tile-name">Headband</div>
-        <div class="tile-desc">Keeps sweat off</div>
-      </div>
-      <div class="tile-footer">
-        <div class="tile-price"><span class="coin">🪙</span> 50</div>
-        <button class="buy-btn" type="button" 
-                data-price="50"
-                data-new-avatar="static/avatar/headband.png">
-          BUY
-        </button>
+      <div class="credits-pill">
+        Credits: <b id="user-credits">{{ credits }}</b>
       </div>
     </div>
 
-    <div class="shop-tile">
-      <div class="tile-inner">
-        <img src="{{ url_for('static', filename='items/headphones.png') }}" class="tile-img" alt="Headphones">
-        <div class="tile-name">Headphones</div>
-        <div class="tile-desc">Workout soundtrack</div>
-      </div>
-      <div class="tile-footer">
-        <div class="tile-price"><span class="coin">🪙</span> 180</div>
-        <button class="buy-btn" type="button" 
-                data-price="180"
-                data-new-avatar="static/avatar/headphone.png">
-          BUY
-        </button>
+    <div class="avatar-section">
+      <div class="avatar-card">
+        
+        <div class="tier-badge tier-badge--{{ tier|lower }}">
+            {{ tier }}
+        </div>
+
+        <img id="main-avatar"
+             src="{{ url_for('static', filename='avatar/default.jpg') }}"
+             data-base-src="{{ url_for('static', filename='avatar/default.jpg') }}"
+             class="avatar-img"
+             style="width:140px; display:block; margin: 0 auto 10px auto;">
+        
+        <div class="muted center">
+          Latest score: <b>{{ latest_score }}</b>
+        </div>
       </div>
     </div>
 
-    <div class="shop-tile">
-      <div class="tile-inner">
-        <img src="{{ url_for('static', filename='items/wristband.png') }}" class="tile-img" alt="Wristband">
-        <div class="tile-name">Wristband</div>
-        <div class="tile-desc">Grip & comfort</div>
-      </div>
-      <div class="tile-footer">
-        <div class="tile-price"><span class="coin">🪙</span> 60</div>
-        <button class="buy-btn" type="button" 
-                data-price="60"
-                data-new-avatar="static/avatar/wristband.png">
-          BUY
-        </button>
-      </div>
+    <div class="shop-header">
+      <div class="shop-header__title">SHOP</div>
     </div>
 
-    <div class="shop-tile">
-      <div class="tile-inner">
-        <img src="{{ url_for('static', filename='items/watch.png') }}" class="tile-img" alt="Sports Watch">
-        <div class="tile-name">Sports Watch</div>
-        <div class="tile-desc">Track your runs</div>
+    <div class="shop-grid shop-grid--game">
+
+      {% for name, desc, img_path, price, avatar_path in [
+        ("Headband", "Keeps sweat off", "items/headband.png", 50, "avatar/headband.png"),
+        ("Headphones", "Workout soundtrack", "items/headphones.png", 180, "avatar/headphone.png"),
+        ("Wristband", "Grip & comfort", "items/wristband.png", 60, "avatar/wristband.png"),
+        ("Sports Watch", "Track your runs", "items/watch.png", 220, "avatar/watch.png"),
+        ("Nike T-Shirt", "Classic training fit", "items/nikeshirt.png", 140, "avatar/nikeshirt.png"),
+        ("Nike Singlet", "Light & breathable", "items/nikesinglet.png", 130, "avatar/nikesinglet.png")
+      ] %}
+
+      <div class="shop-tile">
+        <div class="tile-inner">
+          <img src="{{ url_for('static', filename=img_path) }}" class="tile-img" alt="{{ name }}">
+          <div class="tile-name">{{ name }}</div>
+          <div class="tile-desc">{{ desc }}</div>
+        </div>
+        <div class="tile-footer">
+          <div class="tile-price">🪙 {{ price }}</div>
+          <button class="buy-btn" type="button"
+                  data-price="{{ price }}"
+                  data-new-avatar="{{ url_for('static', filename=avatar_path) }}">
+            BUY
+          </button>
+        </div>
       </div>
-      <div class="tile-footer">
-        <div class="tile-price"><span class="coin">🪙</span> 220</div>
-        <button class="buy-btn" type="button" 
-                data-price="220"
-                data-new-avatar="static/avatar/watch.png">
-          BUY
-        </button>
-      </div>
+
+      {% endfor %}
+
     </div>
 
-    <div class="shop-tile">
-      <div class="tile-inner">
-        <img src="static/items/nikeshirt.png" class="tile-img" alt="Nike T-Shirt">
-        <div class="tile-name">Nike T-Shirt</div>
-        <div class="tile-desc">Classic training fit</div>
-      </div>
-      <div class="tile-footer">
-        <div class="tile-price"><span class="coin">🪙</span> 140</div>
-        <button class="buy-btn" type="button" 
-                data-price="140"
-                data-new-avatar="static/avatar/nikeshirt.png">
-          BUY
-        </button>
-      </div>
-    </div>
-
-    <div class="shop-tile">
-      <div class="tile-inner">
-        <img src="static/items/nikesinglet.png" class="tile-img" alt="Nike Singlet">
-        <div class="tile-name">Nike Singlet</div>
-        <div class="tile-desc">Light & breathable</div>
-      </div>
-      <div class="tile-footer">
-        <div class="tile-price"><span class="coin">🪙</span> 130</div>
-        <button class="buy-btn" type="button" 
-                data-price="130"
-                data-new-avatar="static/avatar/nikesinglet.png">
-          BUY
-        </button>
-      </div>
+    <div class="mt">
+        <a class="btn btn-sm btn-ghost" href="/home">Back</a>
     </div>
 
   </div>
-
-  <div class="mt">
-    <a class="btn btn-sm btn-ghost" href="/home">Back</a>
-  </div>
-
 </div>
 
 <script>
   // 1. Initialize State
-  // We grab the credits from the HTML rendered by Jinja
   let currentCredits = parseInt(document.getElementById('user-credits').innerText);
   
   // Track which items (by image URL) are owned
-  // In a real app, this would come from the database
   let ownedItems = new Set();
   
   // Track currently equipped item URL
