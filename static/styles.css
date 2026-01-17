@@ -63,12 +63,15 @@ body{
 }
 
 /* vignette + subtle pattern for depth (NO white dot highlight) */
+/* vignette + subtle pattern for depth (NO white dot highlight) */
 .shop-bg::after{
   content: "";
   position: absolute;
   inset: -70px;
   background:
+    /* keep vignette */
     radial-gradient(circle at 50% 40%, rgba(0,0,0,0) 42%, rgba(0,0,0,0.24) 100%),
+    /* keep diagonal pattern */
     repeating-linear-gradient(
       45deg,
       rgba(15,23,42,0.045) 0px,
