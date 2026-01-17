@@ -41,7 +41,9 @@
       <div class="avatar-card">
         <div class="tier-badge tier-badge--{{ tier|lower }}">
           {{ tier }}
-        </div>
+      </div>
+
+      
 
         <div class="avatar-wrap">
           <img id="main-avatar"
@@ -55,7 +57,9 @@
     </div>
 
     <div class="shop-header">
-      <div class="shop-header__title">ITEMS</div>
+      <div class="shop-header__title, mt">
+        <button id="save-avatar" class="btn btn-primary">Save</button>
+      </div>
     </div>
 
     <div class="shop-grid shop-grid--game">
@@ -88,10 +92,7 @@
       {% endfor %}
     </div>
 
-    <div class="mt">
-      <button id="save-avatar" class="btn btn-primary">Save</button>
-      <a class="btn btn-sm btn-ghost" href="/home">Back</a>
-    </div>
+    
 
   </div>
 </div>

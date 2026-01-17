@@ -334,6 +334,17 @@ body{
   justify-content: center;
 }
 
+#save-avatar{
+  padding: 12px 22px;
+  font-weight: 1000;
+  letter-spacing: 3px;
+  color: white;
+  background: linear-gradient(180deg, #8a5c2d, #5c3718);
+  border-radius: 14px;
+  border:none;
+  box-shadow: var(--shadow2);
+}
+
 .shop-header__title{
   padding: 12px 22px;
   font-weight: 1000;
