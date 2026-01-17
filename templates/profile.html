@@ -51,7 +51,14 @@
             <div class="pill">Last IPPT Test score</div>
             <div>
               <label class="sr-only" for="last_ippt_score">Last IPPT Test score</label>
-              <select class="select" id="last_ippt_score" name="last_ippt_score">
+              <input
+                class="input"
+                type="number"
+                id="last_ippt_score"
+                name="last_ippt_score"
+                value="{{ user.prev_ippt_score if user and user.prev_ippt_score else '' }}"
+              />
+              <!-- <select class="select" id="last_ippt_score" name="last_ippt_score">
                 <option value="" {% if not user or not user.last_ippt_score %}selected{% endif %}>
                   Select result
                 </option>
@@ -70,7 +77,7 @@
                 <option value="gold" {% if user and user.last_ippt_score=='gold' %}selected{% endif %}>
                   Gold
                 </option>
-              </select>
+              </select> -->
             </div>
           </div>
         </div>

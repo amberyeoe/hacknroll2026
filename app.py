@@ -407,7 +407,6 @@ def onboarding():
     return render_template("onboarding.html")
 
 @app.route("/leaderboard")
-@login_required
 def leaderboard():
     db = get_db()
     # Get all users and points, sorted descending
@@ -421,10 +420,34 @@ def leaderboard():
     return render_template("leaderboard.html", users_points=users_points)
 
 
-@app.route("/profile")
+@app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
-    return render_template("profile.html")
+    db = get_db()
+
+    if request.method == "POST":
+        dob = request.form.get("dob")
+        next_ippt_date = request.form.get("next_ippt_date")
+        prev_ippt_score = request.form.get("last_ippt_score")
+
+        db.execute("""
+            UPDATE profiles
+            SET dob = ?, next_ippt_date = ?, prev_ippt_score = ?
+            WHERE user_id = ?
+        """, (dob, next_ippt_date, prev_ippt_score, current_user.id))
+        db.commit()
+
+        return redirect(url_for("profile"))
+
+    # GET: fetch existing profile
+    user = db.execute("""
+        SELECT dob, next_ippt_date, prev_ippt_score
+        FROM profiles
+        WHERE user_id = ?
+    """, (current_user.id,)).fetchone()
+
+    return render_template("profile.html", user=user)
+
 
 
 if __name__ == "__main__":
