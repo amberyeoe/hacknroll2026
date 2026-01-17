@@ -2,9 +2,9 @@
 
 {% block title %}Shop{% endblock %}
 
-{# If your base.html already includes styles.css, you can delete this block #}
+{# Remove this block if base.html already links styles.css #}
 {% block css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+<link rel="stylesheet" href="../static/styles.css">
 {% endblock %}
 
 {% block content %}
@@ -19,27 +19,34 @@
     </div>
 
     <div class="credits-pill">
-      Credits: <b>150</b>
+      Credits: <b>{{ credits }}</b>
     </div>
   </div>
 
-  <!-- Centered avatar section -->
+  <!-- Centered avatar section (badge + avatar based on latest score tier) -->
   <div class="avatar-section">
     <div class="avatar-card">
-      <div class="tier-badge">SILVER</div>
-      <div class="avatar avatar--silver" title="Avatar"></div>
-      <div class="muted center">Avatar updates based on your latest estimated tier.</div>
+
+      <div class="tier-badge tier-badge--{{ tier|lower }}">
+        {{ tier }}
+      </div>
+
+      <div class="avatar avatar--{{ tier|lower }}" title="Avatar"></div>
+
+      <div class="muted center">
+        Latest score: <b>{{ latest_score }}</b>
+      </div>
     </div>
   </div>
 
   <div class="section-title">Items</div>
 
-  <!-- Compact shop grid (6 items) -->
+  <!-- Compact shop grid (6 items hardcoded for now) -->
   <div class="shop-grid">
 
     <div class="item-card">
       <div class="item-top">
-        <div class="item-icon" aria-hidden="true"></div>
+        <div class="item-icon"></div>
         <div class="item-info">
           <div class="item-name">Headband</div>
           <div class="item-desc">+ style</div>
@@ -53,9 +60,9 @@
 
     <div class="item-card">
       <div class="item-top">
-        <div class="item-icon" aria-hidden="true"></div>
+        <div class="item-icon"></div>
         <div class="item-info">
-          <div class="item-name">Headphones</div>
+          <div class="item-name">Running Shoes</div>
           <div class="item-desc">drip</div>
         </div>
       </div>
@@ -67,9 +74,9 @@
 
     <div class="item-card">
       <div class="item-top">
-        <div class="item-icon" aria-hidden="true"></div>
+        <div class="item-icon"></div>
         <div class="item-info">
-          <div class="item-name">Wrist Band</div>
+          <div class="item-name">Gold Badge</div>
           <div class="item-desc">flex</div>
         </div>
       </div>
@@ -81,9 +88,9 @@
 
     <div class="item-card">
       <div class="item-top">
-        <div class="item-icon" aria-hidden="true"></div>
+        <div class="item-icon"></div>
         <div class="item-info">
-          <div class="item-name">Sports Watch</div>
+          <div class="item-name">Wrist Wraps</div>
           <div class="item-desc">gym vibes</div>
         </div>
       </div>
@@ -95,7 +102,7 @@
 
     <div class="item-card">
       <div class="item-top">
-        <div class="item-icon" aria-hidden="true"></div>
+        <div class="item-icon"></div>
         <div class="item-info">
           <div class="item-name">Compression Tee</div>
           <div class="item-desc">tight fit</div>
@@ -109,10 +116,10 @@
 
     <div class="item-card">
       <div class="item-top">
-        <div class="item-icon" aria-hidden="true"></div>
+        <div class="item-icon"></div>
         <div class="item-info">
-          <div class="item-name">Singlet</div>
-          <div class="item-desc">tight fit</div>
+          <div class="item-name">Protein Shaker</div>
+          <div class="item-desc">fuel up</div>
         </div>
       </div>
       <div class="item-bottom">

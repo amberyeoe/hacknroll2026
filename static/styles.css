@@ -22,11 +22,7 @@ body {
   line-height: 1.1;
 }
 
-.muted {
-  opacity: 0.7;
-  font-size: 13px;
-}
-
+.muted { opacity: 0.7; font-size: 13px; }
 .center { text-align: center; }
 .mt { margin-top: 14px; }
 
@@ -73,6 +69,7 @@ body {
   gap: 10px;
 }
 
+/* Tier badge base */
 .tier-badge {
   padding: 6px 10px;
   border-radius: 999px;
@@ -81,6 +78,12 @@ body {
   font-size: 12px;
   font-weight: 800;
 }
+
+/* Tier badge variants */
+.tier-badge--gold { border-color: #d7b04a; }
+.tier-badge--silver { border-color: #9aa0aa; }
+.tier-badge--pass { border-color: #4b86ff; }
+.tier-badge--untrained { border-color: #ff6a6a; }
 
 /* Bigger avatar */
 .avatar {
@@ -92,9 +95,10 @@ body {
 }
 
 /* Tier outlines */
-.avatar--pass { outline: 3px solid rgba(60, 130, 255, 0.35); }
+.avatar--gold { outline: 3px solid rgba(255, 190, 60, 0.45); }
 .avatar--silver { outline: 3px solid rgba(120, 120, 120, 0.35); }
-.avatar--gold { outline: 3px solid rgba(255, 190, 60, 0.40); }
+.avatar--pass { outline: 3px solid rgba(60, 130, 255, 0.35); }
+.avatar--untrained { outline: 3px solid rgba(255, 106, 106, 0.28); }
 
 /* =========================
    Shop grid
@@ -126,7 +130,7 @@ body {
   gap: 10px;
 }
 
-/* Placeholder icon */
+/* Placeholder icon (swap to image later) */
 .item-icon {
   width: 44px;
   height: 44px;
@@ -181,10 +185,7 @@ body {
   color: #111;
 }
 
-.btn-sm {
-  padding: 6px 10px;
-  font-size: 12px;
-}
+.btn-sm { padding: 6px 10px; font-size: 12px; }
 
 .btn-primary {
   background: #2f6fff;
@@ -192,6 +193,4 @@ body {
   color: #fff;
 }
 
-.btn-ghost {
-  background: #ffffff;
-}
+.btn-ghost { background: #ffffff; }
