@@ -14,6 +14,7 @@
       <div class="title-banner">
         <h1 class="page-title">Log Workout</h1>
       </div>
+
       <a href="{{ url_for('home') }}" class="dash-btn">Dashboard</a>
     </div>
 
@@ -157,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function hideOverlay(){
     fsOverlay.classList.add("hidden");
-    fsOverlay.classList.remove("countdown-pu", "countdown-su"); // <-- important
+    fsOverlay.classList.remove("countdown-pu", "countdown-su");
     document.body.classList.remove("no-scroll");
     fsDone.classList.add("hidden");
   }
@@ -213,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const statusEl = document.getElementById(isPU ? "pu-status" : "su-status");
     const barEl = document.getElementById(isPU ? "pu-progress" : "su-progress");
 
-    const TOTAL = 1; // 60 in production
+    const TOTAL = 1; // change to 60 for production
     const startMs = Date.now();
     const endMs = startMs + TOTAL * 1000;
 
@@ -239,7 +240,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function startTimedTest(type){
-    // Don’t allow starting if a timer already running
     if (activeInterval) return;
 
     activeType = type;
@@ -259,7 +259,6 @@ document.addEventListener("DOMContentLoaded", () => {
     fsSub.textContent = "GET READY";
     showOverlay();
 
-    // 3-2-1
     let pre = 3;
     fsNumber.textContent = String(pre);
 
@@ -276,7 +275,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   }
 
-  // Wire buttons
   document.getElementById("btn-pu-start").addEventListener("click", () => startTimedTest("pu"));
   document.getElementById("btn-su-start").addEventListener("click", () => startTimedTest("su"));
 
@@ -296,7 +294,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("run_min").focus();
   });
 
-  // init
   resetStation("pu");
   resetStation("su");
 });
