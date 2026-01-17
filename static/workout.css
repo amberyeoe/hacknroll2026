@@ -43,11 +43,6 @@
   color: #111;
 }
 
-.home-link {
-  text-decoration: none;
-  color: #111;
-  font-weight: 800;
-}
 /* Dashboard button (yellow, like a real button) */
 .dash-btn {
   display: inline-flex;
@@ -57,13 +52,13 @@
   padding: 14px 18px;
   border-radius: 16px;
 
-  background: #f7c948;      /* yellow */
+  background: #f7c948;
   color: #111;
   border: 1px solid #111;
 
   font-weight: 900;
   letter-spacing: 0.6px;
-  text-decoration: none;    /* removes underline */
+  text-decoration: none;
   cursor: pointer;
 
   box-shadow: 0 10px 22px rgba(0,0,0,0.12);
@@ -138,6 +133,7 @@
 .action-btn:active { transform: translateY(0px); }
 .action-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
+/* Keep if you still need a white variant elsewhere */
 .action-btn.secondary {
   background: #fff;
   color: #111;
@@ -187,7 +183,7 @@
   transition: width 120ms linear;
 }
 
-/* ===== Timer display ===== */
+/* ===== Timer display (inside cards) ===== */
 .timer-box {
   width: 170px;
   height: 76px;
@@ -294,6 +290,7 @@
   letter-spacing: 0.8px;
   cursor: pointer;
   box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  transition: transform 120ms ease;
 }
 
 .save-btn:hover { transform: translateY(-1px); }
@@ -306,21 +303,54 @@
   position: fixed;
   inset: 0;
   z-index: 9999;
+
+  /* default (3-2-1 screen) */
   background: rgba(0,0,0,0.86);
+
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 22px;
+  overflow: hidden; /* needed for ::before tint */
 }
 
 .fs-overlay.hidden { display: none; }
 
+/* During 60s countdown: switch backgrounds per test */
+.fs-overlay.countdown-pu {
+  background-image: url("workout/pushup.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.fs-overlay.countdown-su {
+  background-image: url("workout/situp.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* tint */
+.fs-overlay.countdown-pu::before,
+.fs-overlay.countdown-su::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+}
+
+/* Card above tint */
 .fs-card {
+  position: relative;
+  z-index: 1;
+
   width: min(720px, 92vw);
   border-radius: 24px;
   padding: 28px 22px;
-  background: rgba(0,0,0,0.18);
-  border: 1px solid rgba(255,255,255,0.16);
+
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.18);
   text-align: center;
   color: #fff;
   backdrop-filter: blur(6px);
@@ -330,7 +360,7 @@
   font-size: 18px;
   font-weight: 900;
   letter-spacing: 0.6px;
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
 .fs-number {
@@ -339,6 +369,15 @@
   letter-spacing: 2px;
   font-size: clamp(72px, 14vw, 140px);
   line-height: 1.05;
+
+  color: #fff;
+  text-shadow: 0 6px 22px rgba(0,0,0,0.9);
+
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 22px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.14);
 }
 
 .fs-sub {
@@ -346,7 +385,7 @@
   font-size: 14px;
   font-weight: 900;
   letter-spacing: 1.2px;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 .fs-actions {
@@ -363,7 +402,7 @@
   letter-spacing: 0.5px;
   cursor: pointer;
   border: 1px solid rgba(255,255,255,0.22);
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.10);
   color: #fff;
   min-width: 140px;
 }
@@ -374,7 +413,7 @@
   border-color: #fff;
 }
 
-.fs-btn.ghost:hover { background: rgba(255,255,255,0.12); }
+.fs-btn.ghost:hover { background: rgba(255,255,255,0.14); }
 .fs-btn.hidden { display: none; }
 
 /* ===== Mobile ===== */

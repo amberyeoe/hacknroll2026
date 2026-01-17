@@ -154,9 +154,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function hideOverlay(){
     fsOverlay.classList.add("hidden");
+    fsOverlay.classList.remove("countdown-pu", "countdown-su"); // <-- important
     document.body.classList.remove("no-scroll");
     fsDone.classList.add("hidden");
   }
+
 
   // Single-running lock
   let activeInterval = null;
@@ -202,6 +204,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function startMainCountdown(type){
+    fsOverlay.classList.remove("countdown-pu", "countdown-su");
+    fsOverlay.classList.add(type === "pu" ? "countdown-pu" : "countdown-su");
     const isPU = (type === "pu");
     const timerEl = document.getElementById(isPU ? "pu-timer" : "su-timer");
     const statusEl = document.getElementById(isPU ? "pu-status" : "su-status");
