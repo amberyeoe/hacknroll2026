@@ -8,7 +8,7 @@
   /* Stadium background + dark overlay for readability */
   background:
     linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
-    url("/static/img/stadium.png");
+    url("/static/home_backgrnd/Track.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
