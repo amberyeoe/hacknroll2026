@@ -1,11 +1,18 @@
 /* ===== Dashboard layout ===== */
 .dash-wrap{
-  min-height: calc(100vh - 0px);
-  background: #0b0b0b;
+  min-height: 100vh;
   color: #f5f5f5;
   padding: 40px 24px;
   box-sizing: border-box;
+
+  background:
+    linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+    url("/static/home_backgrnd/Track.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
+
 
 .dash{
   max-width: 1200px;

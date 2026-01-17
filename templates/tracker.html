@@ -1,25 +1,49 @@
 {% extends "base.html" %}
 
 {% block title %}
-tracker
+Tracker
 {% endblock %}
 
 {% block head %}
-<script>
-  nav = document.getElementsByClassName("nav-link");
-  nav[0].classList.remove("active");
-  nav[1].classList.add("active");
-  nav[2].classList.remove("active");
-  nav[3].classList.remove("active");
-  nav[4].classList.remove("active");
-</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-4">IPPT Score Tracker 📈</h2>
 
-   
-    
-    <h1>welcome to tracker</h1>
-    <a href= "{{ url_for('home') }}">home</a>
-   
+  <canvas id="ipptChart"></canvas>
+</div>
+
+<script>
+  const labels = {{ dates | tojson }};
+  const data = {{ scores | tojson }};
+
+  const ctx = document.getElementById("ipptChart").getContext("2d");
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "IPPT Score",
+        data: data,
+        borderWidth: 2,
+        fill: false,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: "Score" }
+        },
+        x: {
+          title: { display: true, text: "Date" }
+        }
+      }
+    }
+  });
+</script>
 {% endblock %}
