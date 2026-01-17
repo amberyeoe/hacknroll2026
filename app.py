@@ -80,7 +80,7 @@ def create_tables():
             user_id INTEGER,
             pushup INTEGER,
             situp INTEGER,
-            run REAL,
+            run INTEGER,
             score INTEGER,
             date_submitted DATE,
             FOREIGN KEY(user_id) REFERENCES users(id)
@@ -146,7 +146,7 @@ def home():
             tier = "FAIL"
         pushups = latest_workout["pushup"]
         situps = latest_workout["situp"]
-        run_time = str(latest_workout["run"])
+        run_time = latest_workout["run"]
     else:
         score = 0
         pushups = 0
@@ -155,6 +155,8 @@ def home():
 
     avatar_url = profile["avatar_path"] if profile and profile["avatar_path"] else None
     credits = profile["credits"] if profile else 0
+
+    run = format_time(run_time)
 
     return render_template(
         "home.html",
@@ -167,10 +169,15 @@ def home():
         score=score,
         pushups=pushups,
         situps=situps,
-        run_time=run_time,
+        run_time=run,
         avatar_url=avatar_url,
         credits=credits
     )
+
+def format_time(seconds):
+    minutes = seconds // 60
+    secs = seconds % 60
+    return f"{minutes:02d}:{secs:02d}"
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -247,9 +254,11 @@ def tracker():
 def workout():
     db = get_db()
     if request.method == "POST":
-        pushup = int(request.form["pushup"])
-        situp = int(request.form["situp"])
-        run = int(float(request.form["run"]))
+        pushup = int(request.form["pushups"])
+        situp = int(request.form["situps"])
+        run_min = int(request.form["run_min"]) 
+        run_sec = int(request.form["run_sec"])
+        run = (run_min* 60) + run_sec
         dob_row = db.execute(
             "SELECT dob FROM profiles WHERE user_id = ?", (current_user.id,)
         ).fetchone()
@@ -266,14 +275,37 @@ def workout():
         else:
             return f"Error fetching IPPT score: {response.status_code}, {age}, {response}"
 
+        today = datetime.now()           # full datetime
+        today_str = today.strftime("%Y-%m-%d")
+
+        db.execute(
+            """
+            DELETE FROM workout_tracking
+            WHERE user_id = ? AND date_submitted = ?
+            """,
+            (current_user.id, today_str)
+        )
+
         db.execute(
             """
             INSERT INTO workout_tracking (user_id, pushup, situp, run, score, date_submitted)
             VALUES (?, ?, ?, ?, ?, ?)
             """,
             # (current_user.id, pushup, situp, run, score, "2025-10-17") #to replace with below
-            (current_user.id, pushup, situp, run, score, datetime.now())
+            (current_user.id, pushup, situp, run, score, today_str)
         )
+
+        db.execute(
+            """
+            UPDATE profiles 
+            SET xp = xp + ?
+            WHERE user_id = ?
+            """,
+            # (current_user.id, pushup, situp, run, score, "2025-10-17") #to replace with below
+            (score, current_user.id)
+        )
+
+
         db.commit()
           # or redirect somewhere
 
@@ -286,7 +318,7 @@ def setworkout():
     if request.method == "POST":
         pushup = int(request.form["pushup"])
         situp = int(request.form["situp"])
-        run = int(float(request.form["run"]))
+        run = int(request.form["run"])
         dob_row = db.execute(
             "SELECT dob FROM profiles WHERE user_id = ?", (current_user.id,)
         ).fetchone()
@@ -302,6 +334,17 @@ def setworkout():
             score = response.json().get('total')
         else:
             return f"Error fetching IPPT score: {response.status_code}, {age}, {response}"
+        
+        today = datetime.now()           # full datetime
+        today_str = today.strftime("%Y-%m-%d")
+
+        db.execute(
+            """
+            DELETE FROM workout_tracking
+            WHERE user_id = ? AND date_submitted = ?
+            """,
+            (current_user.id, today_str)
+        )
 
         db.execute(
             """
@@ -309,8 +352,19 @@ def setworkout():
             VALUES (?, ?, ?, ?, ?, ?)
             """,
             # (current_user.id, pushup, situp, run, score, "2025-10-17") #to replace with below
-            (current_user.id, pushup, situp, run, score, datetime.now())
+            (current_user.id, pushup, situp, run, score, today_str)
         )
+
+        db.execute(
+            """
+            UPDATE profiles 
+            SET xp = xp + ?
+            WHERE user_id = ?
+            """,
+            # (current_user.id, pushup, situp, run, score, "2025-10-17") #to replace with below
+            (score, current_user.id)
+        )
+
         db.commit()
         #   # or redirect somewhere
    
