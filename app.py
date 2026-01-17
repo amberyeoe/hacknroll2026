@@ -309,7 +309,7 @@ def workout():
 
         # 3️⃣ Calculate credits earned
         levels_gained = new_level - old_level
-        credits_earned = max(0, levels_gained * 5)
+        credits_earned = max(0, levels_gained * 10)
 
         # 4️⃣ Update profile
         db.execute(
