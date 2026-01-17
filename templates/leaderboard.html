@@ -2,21 +2,75 @@
 
 {% block title %}Leaderboard{% endblock %}
 
-{% block content %}
-<h1>Leaderboard</h1>
-<table border="1" cellpadding="5">
-    <tr>
-        <th>Rank</th>
-        <th>Username</th>
-        <th>XP</th>
-    </tr>
-    {% for user in users_points %}
-    <tr>
-        <td>{{ loop.index }}</td> <!-- automatically gives 1, 2, 3... -->
-        <td>{{ user['username'] }}</td>
-        <td>{{ user['xp'] }}</td>
-    </tr>
-    {% endfor %}
-</table>
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/leaderboard.css') }}">
 {% endblock %}
 
+{% block content %}
+<section class="lb">
+  <header class="lb__header">
+    <div>
+      <h1 class="lb__title">Leaderboard</h1>
+      <p class="lb__subtitle">See who’s leading the pack</p>
+    </div>
+  </header>
+
+  {# Top 3 podium #}
+  {% if users_points and users_points|length > 0 %}
+  <div class="podium" aria-label="Top 3">
+    {% for place in (2, 1, 3) %}
+      {% if users_points|length >= place %}
+        {% set u = users_points[place-1] %}
+        <article class="podium__slot podium__slot--{{ place }}">
+          <div class="podium__medal" aria-hidden="true">
+            {% if place == 1 %}🥇{% elif place == 2 %}🥈{% else %}🥉{% endif %}
+          </div>
+          <div class="podium__place">#{{ place }}</div>
+          <div class="podium__user" title="{{ u['username'] }}">{{ u['username'] }}</div>
+          <div class="podium__xp">{{ u['xp'] }} <span>XP</span></div>
+        </article>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {# Full leaderboard table card #}
+  <div class="lb__card">
+    <div class="lb__tableWrap" role="region" aria-label="Leaderboard table" tabindex="0">
+      <table class="lb__table">
+        <thead>
+          <tr>
+            <th scope="col">Rank</th>
+            <th scope="col">Username</th>
+            <th scope="col" class="is-right">XP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users_points %}
+          <tr class="{% if loop.index <= 3 %}is-top{% endif %}">
+            <td class="rank">
+              <span class="rank__badge
+                {% if loop.index == 1 %}rank__badge--gold
+                {% elif loop.index == 2 %}rank__badge--silver
+                {% elif loop.index == 3 %}rank__badge--bronze
+                {% else %}rank__badge--base
+                {% endif %}">
+                {{ loop.index }}
+              </span>
+            </td>
+            <td class="user">
+              <span class="user__name">{{ user['username'] }}</span>
+            </td>
+            <td class="xp is-right">
+              <span class="xp__value">{{ user['xp'] }}</span>
+              <span class="xp__label">XP</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}
