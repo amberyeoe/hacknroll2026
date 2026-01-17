@@ -10,9 +10,10 @@
 <div class="workout-bg">
   <div class="workout-page">
 
-    <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-  <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
-    <h3 class="text-center mb-4">Submit Workout</h3>
+    <div class="topbar">
+      <h1 class="page-title">Log Workout</h1>
+      <a class="home-link" href="{{ url_for('home') }}">home</a>
+    </div>
 
     <form class="workout-form" method="POST" action="">
 
@@ -98,9 +99,9 @@
       <div class="save-row">
         <button class="save-btn" type="submit">SAVE WORKOUT</button>
       </div>
+
     </form>
 
   </div>
 </div>
-
 {% endblock %}
