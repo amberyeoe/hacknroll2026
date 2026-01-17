@@ -4,6 +4,17 @@
 tracker
 {% endblock %}
 
+{% block head %}
+<script>
+  nav = document.getElementsByClassName("nav-link");
+  nav[0].classList.remove("active");
+  nav[1].classList.add("active");
+  nav[2].classList.remove("active");
+  nav[3].classList.remove("active");
+  nav[4].classList.remove("active");
+</script>
+{% endblock %}
+
 {% block content %}
 
    
