@@ -1,87 +1,60 @@
 {% extends "base.html" %}
 
-{% block title %}
-Edit Profile
-{% endblock %}
-{% block css %}
+{% block title %}Edit Profile{% endblock %}
 
-<link rel="stylesheet" href="../static/profile.css">{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="../static/profile.css">
+{% endblock %}
+
 {% block content %}
 
-<!-- Make sure base.html loads this CSS (see note below) -->
 <div class="track-bg">
   <div class="overlay">
     <div class="card">
       <div class="title">Edit Profile</div>
 
-      <!-- Update action URL to your real route -->
-      <form method="POST" action="{{ url_for('update_profile') if 'update_profile' in globals() else '' }}">
-        <!-- If you use Flask-WTF CSRF, uncomment:
-        {{ form.csrf_token }}
-        -->
-
+      <!-- Posts to the same route (safe default) -->
+      <form method="POST">
         <div class="rows">
-          <!-- Date of Birth -->
+
           <div class="row">
             <div class="pill">Date of Birth</div>
             <div>
               <label class="sr-only" for="dob">Date of Birth</label>
-              <input
-                class="input"
-                type="date"
-                id="dob"
-                name="dob"
-                value="{{ user.dob if user and user.dob else '' }}"
-              />
+              <input class="input" type="date" id="dob" name="dob"
+                     value="{{ user.dob if user and user.dob else '' }}">
             </div>
           </div>
 
-          <!-- Next IPPT Date -->
           <div class="row">
             <div class="pill">Next IPPT Date</div>
             <div>
               <label class="sr-only" for="next_ippt_date">Next IPPT Date</label>
-              <input
-                class="input"
-                type="date"
-                id="next_ippt_date"
-                name="next_ippt_date"
-                value="{{ user.next_ippt_date if user and user.next_ippt_date else '' }}"
-              />
+              <input class="input" type="date" id="next_ippt_date" name="next_ippt_date"
+                     value="{{ user.next_ippt_date if user and user.next_ippt_date else '' }}">
             </div>
           </div>
 
-          <!-- Last IPPT Test score -->
           <div class="row">
             <div class="pill">Last IPPT Test score</div>
             <div>
               <label class="sr-only" for="last_ippt_score">Last IPPT Test score</label>
               <select class="select" id="last_ippt_score" name="last_ippt_score">
-                <option value="" {% if not user or not user.last_ippt_score %}selected{% endif %}>
-                  Select result
-                </option>
-                <option value="not_taken" {% if user and user.last_ippt_score=='not_taken' %}selected{% endif %}>
-                  Not taken yet
-                </option>
-                <option value="fail" {% if user and user.last_ippt_score=='fail' %}selected{% endif %}>
-                  Fail
-                </option>
-                <option value="pass" {% if user and user.last_ippt_score=='pass' %}selected{% endif %}>
-                  Pass
-                </option>
-                <option value="silver" {% if user and user.last_ippt_score=='silver' %}selected{% endif %}>
-                  Silver
-                </option>
-                <option value="gold" {% if user and user.last_ippt_score=='gold' %}selected{% endif %}>
-                  Gold
-                </option>
+                <option value="" {% if not user or not user.last_ippt_score %}selected{% endif %}>Select result</option>
+                <option value="not_taken" {% if user and user.last_ippt_score=='not_taken' %}selected{% endif %}>Not taken yet</option>
+                <option value="fail" {% if user and user.last_ippt_score=='fail' %}selected{% endif %}>Fail</option>
+                <option value="pass" {% if user and user.last_ippt_score=='pass' %}selected{% endif %}>Pass</option>
+                <option value="silver" {% if user and user.last_ippt_score=='silver' %}selected{% endif %}>Silver</option>
+                <option value="gold" {% if user and user.last_ippt_score=='gold' %}selected{% endif %}>Gold</option>
               </select>
             </div>
           </div>
+
         </div>
 
         <div class="actions">
-          <a class="btn" href="{{ url_for('profile') if 'profile' in globals() else '#' }}">Cancel</a>
+          <!-- Change this to your real profile route -->
+          <a class="btn" href="/profile">Cancel</a>
           <button class="btn primary" type="submit">Save</button>
         </div>
       </form>
