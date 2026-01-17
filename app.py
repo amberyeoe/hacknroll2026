@@ -86,6 +86,17 @@ def create_tables():
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
     """)
+    #ITEMS OWNED TABLES
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS owned_items (
+        user_id INTEGER,
+        item_path TEXT,
+        PRIMARY KEY (user_id, item_path),
+        FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    """)
+
+    
 
 
     db.commit()
