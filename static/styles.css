@@ -1,6 +1,6 @@
 /* =========================
-   Full styles.css (Option B: Shop vibes)
-   Replace your entire static/css/styles.css with this
+   static/css/styles.css
+   Replace your entire file with this
 ========================= */
 
 * { box-sizing: border-box; }
@@ -23,7 +23,6 @@ body{
   color: var(--text);
   min-height: 100vh;
 
-  /* Premium shop gradient + faint texture lines */
   background:
     radial-gradient(900px 500px at 20% 15%, rgba(255,190,60,0.16), transparent 60%),
     radial-gradient(900px 500px at 85% 20%, rgba(59,130,246,0.14), transparent 55%),
@@ -63,7 +62,7 @@ body{
 .mt{ margin-top: 14px; }
 
 /* =========================
-   Topbar (title + credits)
+   Topbar
 ========================= */
 .topbar{
   display: flex;
@@ -125,7 +124,7 @@ body{
 .tier-badge--pass{ border-color: rgba(75,134,255,0.80); }
 .tier-badge--untrained{ border-color: rgba(255,106,106,0.80); }
 
-/* Bigger avatar */
+/* Avatar */
 .avatar{
   width: 150px;
   height: 150px;
@@ -142,78 +141,7 @@ body{
 .avatar--untrained{ outline: 3px solid rgba(255, 106, 106, 0.28); }
 
 /* =========================
-   Shop grid
-========================= */
-.section-title{
-  margin-top: 16px;
-  font-weight: 900;
-  font-size: 14px;
-  opacity: 0.95;
-}
-
-.shop-grid{
-  margin-top: 10px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 12px;
-}
-
-.item-card{
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 12px;
-  background: var(--card);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
-}
-
-.item-top{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Placeholder icon */
-.item-icon{
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.55));
-  border: 1px solid var(--border);
-  box-shadow: 0 6px 14px rgba(2,6,23,0.06);
-  flex: 0 0 auto;
-}
-
-.item-info{ min-width: 0; }
-
-.item-name{
-  font-weight: 900;
-  font-size: 14px;
-  line-height: 1.1;
-}
-
-.item-desc{
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 3px;
-}
-
-.item-bottom{
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.item-price{
-  font-weight: 900;
-  font-size: 12px;
-  opacity: 0.95;
-}
-
-/* =========================
-   Buttons (app-like)
+   Buttons (shared)
 ========================= */
 .btn{
   width: auto !important;
@@ -235,20 +163,140 @@ body{
   font-size: 12px;
 }
 
-.btn-primary{
-  background: linear-gradient(180deg, #3b82f6, #2563eb);
-  border-color: rgba(37,99,235,0.92);
-  color: #fff;
-  box-shadow: 0 8px 18px rgba(37,99,235,0.22);
-}
-
-.btn-primary:hover{
-  filter: brightness(1.03);
-  transform: translateY(-1px);
-}
-
 .btn-ghost{
   background: rgba(255,255,255,0.88);
+}
+
+/* =========================
+   GAME SHOP Styling
+========================= */
+
+.shop-header{
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.shop-header__title{
+  padding: 12px 22px;
+  font-weight: 1000;
+  letter-spacing: 3px;
+  font-size: 18px;
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.25);
+
+  border-radius: 14px;
+  border: 2px solid rgba(0,0,0,0.12);
+
+  background:
+    linear-gradient(180deg, rgba(138,92,45,0.95), rgba(92,55,24,0.95));
+  box-shadow:
+    0 10px 20px rgba(2,6,23,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+/* grid */
+.shop-grid{
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+.shop-tile{
+  border-radius: 18px;
+  padding: 10px;
+  background:
+    linear-gradient(180deg, rgba(120,82,42,0.28), rgba(120,82,42,0.12));
+  border: 1px solid rgba(0,0,0,0.10);
+  box-shadow: 0 14px 26px rgba(2,6,23,0.10);
+  overflow: hidden;
+}
+
+/* orange inner tile */
+.tile-inner{
+  border-radius: 14px;
+  padding: 14px 12px 12px 12px;
+  background:
+    radial-gradient(120px 90px at 30% 20%, rgba(255,255,255,0.35), transparent 60%),
+    linear-gradient(180deg, rgba(255,190,60,0.95), rgba(255,135,40,0.95));
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
+  min-height: 128px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.tile-icon{
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+
+  background: rgba(255,255,255,0.35);
+  border: 1px solid rgba(0,0,0,0.10);
+  box-shadow: 0 8px 16px rgba(2,6,23,0.10);
+  margin-bottom: 10px;
+}
+
+.tile-name{
+  font-weight: 1000;
+  color: rgba(20,10,0,0.92);
+  font-size: 14px;
+  line-height: 1.1;
+}
+
+.tile-desc{
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(20,10,0,0.65);
+}
+
+/* footer */
+.tile-footer{
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.tile-price{
+  font-weight: 1000;
+  font-size: 13px;
+  color: rgba(15,23,42,0.9);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.coin{
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.15));
+}
+
+.buy-btn{
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.12);
+  cursor: pointer;
+  font-weight: 1000;
+  letter-spacing: 0.6px;
+
+  color: #fff;
+  background: linear-gradient(180deg, #ff7a18, #e95610);
+  box-shadow: 0 10px 18px rgba(233,86,16,0.22);
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.buy-btn:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.04);
 }
 
 /* =========================

@@ -1,17 +1,19 @@
+<!-- =========================
+     templates/shop.html
+     Replace your entire file with this
+========================= -->
 {% extends "base.html" %}
 
 {% block title %}Shop{% endblock %}
 
 {% block css %}
-<!-- Correct Flask static path -->
 <link rel="stylesheet" href="../static/styles.css">
-{% endblock %}
 
 {% block content %}
 
 <div class="page">
 
-  <!-- Top row: title left, credits right -->
+  <!-- Topbar -->
   <div class="topbar">
     <div class="topbar-left">
       <h1 class="h1">Shop</h1>
@@ -23,7 +25,7 @@
     </div>
   </div>
 
-  <!-- Centered avatar section -->
+  <!-- Avatar card -->
   <div class="avatar-section">
     <div class="avatar-card">
 
@@ -39,92 +41,83 @@
     </div>
   </div>
 
-  <div class="section-title">Items</div>
+  <!-- GAME SHOP HEADER -->
+  <div class="shop-header">
+    <div class="shop-header__title">SHOP</div>
+  </div>
 
-  <!-- Shop items (6 items, with secondary text) -->
-  <div class="shop-grid">
+  <!-- GAME SHOP GRID -->
+  <div class="shop-grid shop-grid--game">
 
-    <div class="item-card">
-      <div class="item-top">
-        <div class="item-icon" aria-hidden="true"></div>
-        <div class="item-info">
-          <div class="item-name">Headband</div>
-          <div class="item-desc">Keeps sweat off</div>
-        </div>
+    <div class="shop-tile">
+      <div class="tile-inner">
+        <div class="tile-icon">🎽</div>
+        <div class="tile-name">Headband</div>
+        <div class="tile-desc">Keeps sweat off</div>
       </div>
-      <div class="item-bottom">
-        <div class="item-price">50 credits</div>
-        <button class="btn btn-sm btn-primary" type="button">Buy</button>
+      <div class="tile-footer">
+        <div class="tile-price"><span class="coin">🪙</span> 50</div>
+        <button class="buy-btn" type="button">BUY</button>
       </div>
     </div>
 
-    <div class="item-card">
-      <div class="item-top">
-        <div class="item-icon" aria-hidden="true"></div>
-        <div class="item-info">
-          <div class="item-name">Headphones</div>
-          <div class="item-desc">Workout soundtrack</div>
-        </div>
+    <div class="shop-tile">
+      <div class="tile-inner">
+        <div class="tile-icon">🎧</div>
+        <div class="tile-name">Headphones</div>
+        <div class="tile-desc">Workout soundtrack</div>
       </div>
-      <div class="item-bottom">
-        <div class="item-price">180 credits</div>
-        <button class="btn btn-sm btn-primary" type="button">Buy</button>
+      <div class="tile-footer">
+        <div class="tile-price"><span class="coin">🪙</span> 180</div>
+        <button class="buy-btn" type="button">BUY</button>
       </div>
     </div>
 
-    <div class="item-card">
-      <div class="item-top">
-        <div class="item-icon" aria-hidden="true"></div>
-        <div class="item-info">
-          <div class="item-name">Wristband</div>
-          <div class="item-desc">Extra grip & comfort</div>
-        </div>
+    <div class="shop-tile">
+      <div class="tile-inner">
+        <div class="tile-icon">⌚</div>
+        <div class="tile-name">Wristband</div>
+        <div class="tile-desc">Grip & comfort</div>
       </div>
-      <div class="item-bottom">
-        <div class="item-price">60 credits</div>
-        <button class="btn btn-sm btn-primary" type="button">Buy</button>
+      <div class="tile-footer">
+        <div class="tile-price"><span class="coin">🪙</span> 60</div>
+        <button class="buy-btn" type="button">BUY</button>
       </div>
     </div>
 
-    <div class="item-card">
-      <div class="item-top">
-        <div class="item-icon" aria-hidden="true"></div>
-        <div class="item-info">
-          <div class="item-name">Sports Watch</div>
-          <div class="item-desc">Track your runs</div>
-        </div>
+    <div class="shop-tile">
+      <div class="tile-inner">
+        <div class="tile-icon">🕒</div>
+        <div class="tile-name">Sports Watch</div>
+        <div class="tile-desc">Track your runs</div>
       </div>
-      <div class="item-bottom">
-        <div class="item-price">220 credits</div>
-        <button class="btn btn-sm btn-primary" type="button">Buy</button>
+      <div class="tile-footer">
+        <div class="tile-price"><span class="coin">🪙</span> 220</div>
+        <button class="buy-btn" type="button">BUY</button>
       </div>
     </div>
 
-    <div class="item-card">
-      <div class="item-top">
-        <div class="item-icon" aria-hidden="true"></div>
-        <div class="item-info">
-          <div class="item-name">Nike T-Shirt</div>
-          <div class="item-desc">Classic training fit</div>
-        </div>
+    <div class="shop-tile">
+      <div class="tile-inner">
+        <div class="tile-icon">👕</div>
+        <div class="tile-name">Nike T-Shirt</div>
+        <div class="tile-desc">Classic training fit</div>
       </div>
-      <div class="item-bottom">
-        <div class="item-price">140 credits</div>
-        <button class="btn btn-sm btn-primary" type="button">Buy</button>
+      <div class="tile-footer">
+        <div class="tile-price"><span class="coin">🪙</span> 140</div>
+        <button class="buy-btn" type="button">BUY</button>
       </div>
     </div>
 
-    <div class="item-card">
-      <div class="item-top">
-        <div class="item-icon" aria-hidden="true"></div>
-        <div class="item-info">
-          <div class="item-name">Nike Singlet</div>
-          <div class="item-desc">Lightweight & breathable</div>
-        </div>
+    <div class="shop-tile">
+      <div class="tile-inner">
+        <div class="tile-icon">🏃</div>
+        <div class="tile-name">Nike Singlet</div>
+        <div class="tile-desc">Light & breathable</div>
       </div>
-      <div class="item-bottom">
-        <div class="item-price">130 credits</div>
-        <button class="btn btn-sm btn-primary" type="button">Buy</button>
+      <div class="tile-footer">
+        <div class="tile-price"><span class="coin">🪙</span> 130</div>
+        <button class="buy-btn" type="button">BUY</button>
       </div>
     </div>
 
