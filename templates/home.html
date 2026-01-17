@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block title %}Home{% endblock %}
-
 {% block css %}
 
 <link rel="stylesheet" href="../static/dashboard.css">{% endblock %}
@@ -9,6 +8,7 @@
 <div class="dash-wrap">
   <div class="dash">
 
+    <!-- LEFT -->
     <section class="dash-left">
       <div class="dash-title">LATEST IPPT</div>
 
@@ -34,11 +34,13 @@
         <div class="info-value">{{ score | default(60) }}</div>
       </div>
 
+      <!-- STATUS (FAIL/PASS/SILVER/GOLD) -->
       <div class="info-row">
         <div class="info-label">CURRENT IPPT STATUS:</div>
-        {% set status_val = status | default('PASS') %}
-        <div class="info-value status {{ 'pass' if status_val == 'PASS' else 'fail' }}">
-          {{ status_val }}
+
+        {% set tier = tier | default('PASS') %}
+        <div class="info-value status tier-{{ tier|lower }}">
+          {{ tier }}
         </div>
       </div>
 
@@ -49,18 +51,14 @@
         <div class="info-value">{{ credits | default(300) }}</div>
       </div>
 
-      <div class="xp-row">
+      <!-- XP (number only, no level/fraction) -->
+      <div class="info-row">
         <div class="info-label">XP:</div>
-        <div class="xp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-          <div class="xp-fill" style="width: {{ xp_percent | default(55) }}%;"></div>
-        </div>
-      </div>
-
-      <div class="tiny">
-        Lvl {{ level | default(3) }} • {{ xp | default(260) }}/{{ xp_to_next | default(500) }}
+        <div class="info-value">{{ xp | default(260) }}</div>
       </div>
     </section>
 
+    <!-- RIGHT -->
     <aside class="dash-right">
       <div class="avatar-frame">
         {% if avatar_url %}
