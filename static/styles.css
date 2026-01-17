@@ -1,32 +1,197 @@
-body { font-family: Arial, sans-serif; }
+/* =========================
+   Base
+========================= */
+* { box-sizing: border-box; }
 
-.page{padding:16px; max-width:720px; margin:0 auto;}
-.h1{margin:0 0 4px 0;}
-.muted{opacity:.7; font-size:13px;}
-.mt{margin-top:12px;}
-.row{display:flex; align-items:center; gap:10px;}
-.row-space{justify-content:space-between;}
-
-.pill{
-  padding:8px 12px;
-  border-radius:999px;
-  border:1px solid #2a2f3a;
-  background:rgba(0,0,0,0.04);
-  font-size:13px;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #ffffff;
+  color: #111;
 }
 
-.grid{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:12px;
-  margin-top:14px;
+.page {
+  padding: 16px;
+  max-width: 980px;
+  margin: 0 auto;
 }
-@media (min-width:680px){ .grid{grid-template-columns:1fr 1fr;} }
 
-.card{
-  border:1px solid #2a2f3a;
-  border-radius:14px;
-  padding:12px;
+.h1 {
+  margin: 0 0 4px 0;
+  font-size: 40px;
+  line-height: 1.1;
 }
-.card-title{font-weight:800; font-size:16px;}
-.price{font-weight:800;}
+
+.muted {
+  opacity: 0.7;
+  font-size: 13px;
+}
+
+.center { text-align: center; }
+.mt { margin-top: 14px; }
+
+/* =========================
+   Topbar (title + credits)
+========================= */
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.topbar-left { min-width: 0; }
+
+.credits-pill {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid #d9d9d9;
+  background: #f7f7f7;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* =========================
+   Avatar section
+========================= */
+.avatar-section {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.avatar-card {
+  width: 100%;
+  max-width: 420px;
+  border: 1px solid #d9d9d9;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.tier-badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #d9d9d9;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* Bigger avatar */
+.avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 26px;
+  border: 1px solid #d9d9d9;
+  background: #efefef;
+}
+
+/* Tier outlines */
+.avatar--pass { outline: 3px solid rgba(60, 130, 255, 0.35); }
+.avatar--silver { outline: 3px solid rgba(120, 120, 120, 0.35); }
+.avatar--gold { outline: 3px solid rgba(255, 190, 60, 0.40); }
+
+/* =========================
+   Shop grid
+========================= */
+.section-title {
+  margin-top: 16px;
+  font-weight: 800;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.shop-grid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 10px;
+}
+
+.item-card {
+  border: 1px solid #d9d9d9;
+  border-radius: 12px;
+  padding: 10px;
+  background: #ffffff;
+}
+
+.item-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Placeholder icon */
+.item-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: #f1f1f1;
+  border: 1px solid #e3e3e3;
+  flex: 0 0 auto;
+}
+
+.item-info { min-width: 0; }
+
+.item-name {
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1.1;
+}
+
+.item-desc {
+  font-size: 12px;
+  opacity: 0.75;
+  margin-top: 3px;
+}
+
+.item-bottom {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.item-price {
+  font-weight: 800;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* =========================
+   Buttons (small)
+========================= */
+.btn {
+  width: auto !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid #cfcfcf;
+  background: #ffffff;
+  cursor: pointer;
+  font-weight: 800;
+  text-decoration: none;
+  color: #111;
+}
+
+.btn-sm {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.btn-primary {
+  background: #2f6fff;
+  border-color: #2f6fff;
+  color: #fff;
+}
+
+.btn-ghost {
+  background: #ffffff;
+}
