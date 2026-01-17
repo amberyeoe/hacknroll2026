@@ -89,6 +89,7 @@
     </div>
 
     <div class="mt">
+      <button id="save-avatar" class="btn btn-primary">Save</button>
       <a class="btn btn-sm btn-ghost" href="/home">Back</a>
     </div>
 
@@ -100,15 +101,32 @@
   // ===== State =====
   let currentCredits = parseInt(document.getElementById('user-credits').innerText || "0", 10);
 
-  // Owned items and Equipped items (MULTIPLE)
-  const ownedItems = new Set();
+  const ownedItems = new Set({{ owned_items|tojson if owned_items is defined else [] }});
   const equippedItems = new Set();
 
-  // DOM
   const creditsDisplay = document.getElementById('user-credits');
   const mainAvatar = document.getElementById('main-avatar');
   const baseAvatarUrl = mainAvatar.dataset.baseSrc;
   const toast = document.getElementById('error-toast');
+
+  // ===== Load saved avatar and auto-equip =====
+  const savedAvatarFull = "{{ avatar_path if avatar_path is defined else '' }}";
+
+  let savedAvatarFile = "";
+  if (savedAvatarFull) {
+    savedAvatarFile = savedAvatarFull.split("/").pop();
+  }
+
+  document.querySelectorAll('.buy-btn').forEach(btn => {
+    const itemUrl = btn.getAttribute('data-new-avatar');
+    const itemFile = itemUrl.split("/").pop();
+
+    if (itemFile === savedAvatarFile) {
+      equippedItems.add(itemUrl);
+      ownedItems.add(itemUrl);
+      mainAvatar.src = itemUrl;
+    }
+  });
 
   // ===== Toast =====
   function showToast(message) {
@@ -118,7 +136,6 @@
   }
 
   // ===== Avatar preview helper =====
-  // One image element => preview the most recently equipped item.
   function syncAvatarPreview(preferUrl) {
     if (preferUrl && equippedItems.has(preferUrl)) {
       mainAvatar.src = preferUrl;
@@ -149,65 +166,70 @@
   }
 
   // ===== Click handler =====
- document.querySelectorAll('.buy-btn').forEach(button => {
-  button.addEventListener('click', async function() {  // <-- make async
-    const itemUrl = this.getAttribute('data-new-avatar');
-    const price = parseInt(this.getAttribute('data-price') || "0", 10);
+  document.querySelectorAll('.buy-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const itemUrl = this.getAttribute('data-new-avatar');
+      const price = parseInt(this.getAttribute('data-price') || "0", 10);
 
-    // A) BUY new item (auto-equip)
-    if (!ownedItems.has(itemUrl)) {
-      if (currentCredits < price) {
-        showToast("Insufficient Credits!");
-        return;
-      }
-
-      try {
-        // ---- SEND TO FLASK ----
-        const res = await fetch("/purchase_items", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ avatar_path: itemUrl, price: price })
-        });
-
-        const data = await res.json();
-
-        if (!data.success) {
-          showToast(data.message || "Purchase failed!");
+      // A) BUY new item (auto-equip)
+      if (!ownedItems.has(itemUrl)) {
+        if (currentCredits < price) {
+          showToast("Insufficient Credits!");
           return;
         }
 
-        // ---- UPDATE UI ----
-        currentCredits = data.credits;  // use updated credits from DB
+        currentCredits -= price;
         creditsDisplay.innerText = currentCredits;
 
         ownedItems.add(itemUrl);
         equippedItems.add(itemUrl);
         syncAvatarPreview(itemUrl);
         updateButtons();
-
-      } catch (err) {
-        console.error(err);
-        showToast("Error connecting to server!");
+        return;
       }
 
-      return;
-    }
-
-    // B) Toggle EQUIP / UNEQUIP (multi-equip)
-    if (equippedItems.has(itemUrl)) {
-      equippedItems.delete(itemUrl);
-      if (mainAvatar.src.includes(itemUrl)) {
-        syncAvatarPreview(null);
+      // B) Toggle EQUIP / UNEQUIP
+      if (equippedItems.has(itemUrl)) {
+        equippedItems.delete(itemUrl);
+        if (mainAvatar.src.includes(itemUrl)) {
+          syncAvatarPreview(null);
+        }
+      } else {
+        equippedItems.add(itemUrl);
+        syncAvatarPreview(itemUrl);
       }
-    } else {
-      equippedItems.add(itemUrl);
-      syncAvatarPreview(itemUrl);
-    }
 
-    updateButtons();
+      updateButtons();
+    });
   });
-});
+
+  // ===== Save =====
+  document.getElementById("save-avatar").addEventListener("click", async () => {
+    const equippedArray = Array.from(equippedItems);
+    const ownedArray = Array.from(ownedItems);
+
+    const res = await fetch("/shop/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        credits: currentCredits,
+        avatar_path: mainAvatar.src,
+        owned_items: ownedArray,
+        equipped_items: equippedArray
+      })
+    });
+
+    if (res.ok) {
+      showToast("Saved successfully!");
+    } else {
+      showToast("Save failed.");
+    }
+  });
+
+  // Initial render
+  updateButtons();
 </script>
+
 {% endblock %}
 
 {% endblock %}

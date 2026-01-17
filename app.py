@@ -244,16 +244,74 @@ def logout():
     logout_user()
     return redirect(url_for("login_page"))
 
+# @app.route("/shop")
+# @login_required
+# def shop():
+#     db = get_db()
+#     row = db.execute(
+#             "SELECT credits FROM profiles WHERE user_id = ?", 
+#             (current_user.id,)
+#     ).fetchone()
+#     credits = row["credits"] if row else 0
+#     return render_template("shop.html", credits=credits)
+
 @app.route("/shop")
 @login_required
 def shop():
     db = get_db()
-    row = db.execute(
-            "SELECT credits FROM profiles WHERE user_id = ?", 
-            (current_user.id,)
-    ).fetchone()
-    credits = row["credits"] if row else 0
-    return render_template("shop.html", credits=credits)
+
+    profile = db.execute("""
+        SELECT credits, avatar_path
+        FROM profiles
+        WHERE user_id = ?
+    """, (current_user.id,)).fetchone()
+
+    owned = db.execute("""
+        SELECT item_path FROM owned_items
+        WHERE user_id = ?
+    """, (current_user.id,)).fetchall()
+
+    owned_items = [row["item_path"] for row in owned]
+
+    return render_template(
+        "shop.html",
+        credits=profile["credits"],
+        avatar_path=profile["avatar_path"],
+        owned_items=owned_items
+    )
+
+
+
+@app.route("/shop/save", methods=["POST"])
+@login_required
+def save_shop():
+    data = request.get_json()
+
+    credits = data.get("credits")
+    avatar_path = data.get("avatar_path")
+    owned_items = data.get("owned_items", [])
+
+    db = get_db()
+
+    # Save credits + equipped avatar
+    db.execute("""
+        UPDATE profiles
+        SET credits = ?, avatar_path = ?
+        WHERE user_id = ?
+    """, (credits, avatar_path, current_user.id))
+
+    # Replace owned items
+    db.execute("DELETE FROM owned_items WHERE user_id = ?", (current_user.id,))
+    for item in owned_items:
+        db.execute("""
+            INSERT INTO owned_items (user_id, item_path)
+            VALUES (?, ?)
+        """, (current_user.id, item))
+
+    db.commit()
+    return "Saved", 200
+
+
 
 @app.route("/purchase_items", methods=["POST"]) #888
 @login_required
