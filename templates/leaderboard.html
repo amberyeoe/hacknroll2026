@@ -1,16 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %}
-leaderboard
-{% endblock %}
+{% block title %}Leaderboard{% endblock %}
 
 {% block content %}
-
-   
-    
-    <h1>welcome to leaderboard</h1>
-    <a href= "{{ url_for('home') }}">home</a>
-   
-
-
+<h1>Leaderboard</h1>
+<table border="1" cellpadding="5">
+    <tr>
+        <th>Rank</th>
+        <th>Username</th>
+        <th>Points</th>
+    </tr>
+    {% for user in users_points %}
+    <tr>
+        <td>{{ loop.index }}</td> <!-- automatically gives 1, 2, 3... -->
+        <td>{{ user['username'] }}</td>
+        <td>{{ user['points'] }}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}
+

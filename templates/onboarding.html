@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Onboarding{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
+    <h3 class="text-center mb-4">Register</h3>
+
+    <form method="POST" action="">
+      <div class="mb-3">
+        <label for="birthdate" class="form-label">Birthdate</label>
+        <input type="date" name="birthdate" id="birthdate" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="next_ippt" class="form-label">Next IPPT Date</label>
+        <input type="date" name="next_ippt" id="next_ippt" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="number" class="form-label">Previous IPPT Score</label>
+        <input type="number" name="prev_ippt_score" id="prev_ippt_score" class="form-control" min="0" max="100" placeholder="0 - 100" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="text" class="form-label">IPPT Goal</label>
+        <select id="cars" name="cars" required class="form-select">
+            <option value="" disabled selected>Select your goal</option>
+            <option value="gold">Gold</option>
+            <option value="silver">Silver</option>
+            <option value="bronze">Bronze</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Register</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
