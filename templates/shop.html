@@ -15,19 +15,21 @@
 
     <div class="topbar">
       <div class="topbar-center">
-        <!-- ===== BANNER TITLE ===== -->
-        <div class="shop-banner" aria-label="Shop banner">
+
+        <!-- ===== Banner Title ===== -->
+        <!-- Put your banner image at: static/ui/shop_banner.png -->
+        <div class="shop-banner">
           <img
             class="shop-banner__img"
             src="{{ url_for('static', filename='ui/shop_banner.png') }}"
-            alt=""
-            aria-hidden="true"
+            alt="Shop banner"
           >
           <div class="shop-banner__content">
             <div class="shop-banner__title">SHOP</div>
             <div class="shop-banner__subtitle">Spend credits to buy and equip cosmetics.</div>
           </div>
         </div>
+
       </div>
 
       <div class="credits-pill">
@@ -37,7 +39,6 @@
 
     <div class="avatar-section">
       <div class="avatar-card">
-
         <div class="tier-badge tier-badge--{{ tier|lower }}">
           {{ tier }}
         </div>
@@ -50,7 +51,6 @@
                alt="Your Avatar">
           <div class="avatar-stage" aria-hidden="true"></div>
         </div>
-
       </div>
     </div>
 
@@ -59,7 +59,6 @@
     </div>
 
     <div class="shop-grid shop-grid--game">
-
       {% for name, desc, img_path, price, avatar_path in [
         ("Headband", "Keeps sweat off", "items/headband.png", 50, "avatar/headband.png"),
         ("Headphones", "Workout soundtrack", "items/headphones.png", 180, "avatar/headphone.png"),
@@ -87,7 +86,6 @@
       </div>
 
       {% endfor %}
-
     </div>
 
     <div class="mt">
@@ -120,7 +118,7 @@
   }
 
   // ===== Avatar preview helper =====
-  // Only ONE image element -> show most recently equipped item.
+  // One image element => preview the most recently equipped item.
   function syncAvatarPreview(preferUrl) {
     if (preferUrl && equippedItems.has(preferUrl)) {
       mainAvatar.src = preferUrl;
@@ -188,7 +186,6 @@
     });
   });
 
-  // Initial render
   updateButtons();
 </script>
 {% endblock %}

@@ -32,7 +32,7 @@ body{
   overflow: hidden;
 }
 
-/* default overlay (other pages can keep this) */
+/* default overlay */
 .workout-bg::before{
   content: "";
   position: absolute;
@@ -49,19 +49,13 @@ body{
 }
 
 /* =========================
-   SHOP: upgraded background layer
+   SHOP background layer
 ========================= */
-.shop-bg{
-  /* background-image: url("/static/home_backgrnd/Shop.png"); */
-}
-
-/* stronger, nicer "glass" but not washed out */
 .shop-bg::before{
   background: rgba(255,255,255,0.32);
   backdrop-filter: blur(6px);
 }
 
-/* vignette + subtle pattern for depth (NO highlight blob layer) */
 .shop-bg::after{
   content: "";
   position: absolute;
@@ -100,13 +94,14 @@ body{
 .topbar{
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   position: relative;
   gap: 10px;
 }
 
 .topbar-center{
   text-align: center;
+  width: 100%;
 }
 
 /* Credits pill */
@@ -134,24 +129,26 @@ body{
 }
 
 /* =========================
-   Shop Banner Title
+   Shop Banner (covers both lines)
 ========================= */
 .shop-banner{
   position: relative;
-  width: min(560px, 92vw);
-  height: 120px;
-  margin: 6px auto 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: min(640px, 94vw);
+  height: 150px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
 }
 
 .shop-banner__img{
   position: absolute;
-  inset: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
   object-fit: contain;
+  z-index: 2;
   pointer-events: none;
   user-select: none;
   filter: drop-shadow(0 14px 22px rgba(0,0,0,0.25));
@@ -159,36 +156,36 @@ body{
 
 .shop-banner__content{
   position: relative;
-  z-index: 1;
+  z-index: 3;
   text-align: center;
   padding: 0 18px;
-  transform: translateY(-2px);
 }
 
 .shop-banner__title{
   font-weight: 1000;
   letter-spacing: 3px;
   color: #fff;
-  font-size: 44px;
+  font-size: 46px;
   line-height: 1;
   text-transform: uppercase;
+  margin-top: 6px;
   text-shadow:
     0 3px 0 rgba(0,0,0,0.35),
     0 10px 20px rgba(0,0,0,0.35);
 }
 
 .shop-banner__subtitle{
-  margin-top: 6px;
-  color: rgba(255,255,255,0.92);
-  font-weight: 700;
+  margin-top: -2px;
+  color: rgba(255,255,255,0.95);
+  font-weight: 800;
   font-size: 13px;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.35px;
   text-shadow: 0 2px 10px rgba(0,0,0,0.35);
 }
 
 @media (max-width: 600px){
-  .shop-banner{ height: 104px; }
-  .shop-banner__title{ font-size: 36px; letter-spacing: 2px; }
+  .shop-banner{ height: 132px; }
+  .shop-banner__title{ font-size: 38px; letter-spacing: 2px; }
   .shop-banner__subtitle{ font-size: 12px; }
 }
 
@@ -221,7 +218,7 @@ body{
 }
 
 /* =========================
-   Avatar (no outer white card)
+   Avatar
 ========================= */
 .avatar-section{
   margin-top: 18px;
