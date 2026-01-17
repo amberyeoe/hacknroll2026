@@ -129,13 +129,13 @@ body{
 }
 
 /* =========================
-   Shop Banner (covers both lines)
+   Shop Banner (covers BOTH lines fully)
 ========================= */
 .shop-banner{
   position: relative;
-  width: min(640px, 94vw);
-  height: 150px;
-  margin: 0 auto;
+  width: min(720px, 96vw);
+  height: 170px;                 /* taller container */
+  margin: 0 auto 6px;
   display: grid;
   place-items: center;
 }
@@ -144,11 +144,14 @@ body{
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scaleX(1.08) scaleY(1.85);
+  /* ^ THIS is the key: scaleY makes the red banner taller to cover subtitle */
+
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: fill;              /* stretch to actually fill height */
   z-index: 2;
+
   pointer-events: none;
   user-select: none;
   filter: drop-shadow(0 14px 22px rgba(0,0,0,0.25));
@@ -156,36 +159,41 @@ body{
 
 .shop-banner__content{
   position: relative;
-  z-index: 3;
+  z-index: 3;                    /* text above banner */
   text-align: center;
   padding: 0 18px;
+  transform: translateY(2px);    /* keeps text nicely centered inside */
 }
 
 .shop-banner__title{
   font-weight: 1000;
   letter-spacing: 3px;
   color: #fff;
-  font-size: 46px;
+  font-size: 48px;
   line-height: 1;
   text-transform: uppercase;
-  margin-top: 6px;
+  margin: 0;
   text-shadow:
     0 3px 0 rgba(0,0,0,0.35),
     0 10px 20px rgba(0,0,0,0.35);
 }
 
 .shop-banner__subtitle{
-  margin-top: -2px;
-  color: rgba(255,255,255,0.95);
+  margin-top: 6px;
+  color: rgba(255,255,255,0.96);
   font-weight: 800;
   font-size: 13px;
   letter-spacing: 0.35px;
   text-shadow: 0 2px 10px rgba(0,0,0,0.35);
 }
 
+/* Mobile */
 @media (max-width: 600px){
-  .shop-banner{ height: 132px; }
-  .shop-banner__title{ font-size: 38px; letter-spacing: 2px; }
+  .shop-banner{ height: 150px; width: min(680px, 96vw); }
+  .shop-banner__img{
+    transform: translate(-50%, -50%) scaleX(1.06) scaleY(2.0);
+  }
+  .shop-banner__title{ font-size: 40px; letter-spacing: 2px; }
   .shop-banner__subtitle{ font-size: 12px; }
 }
 
