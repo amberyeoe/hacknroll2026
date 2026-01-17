@@ -3,7 +3,7 @@
 {% block title %}Edit Profile{% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="../static/profile.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -13,47 +13,70 @@
     <div class="card">
       <div class="title">Edit Profile</div>
 
-      <!-- Posts to the same route (safe default) -->
+      <!-- Safe default: POST back to same route -->
       <form method="POST">
         <div class="rows">
-
+          <!-- Date of Birth -->
           <div class="row">
             <div class="pill">Date of Birth</div>
             <div>
               <label class="sr-only" for="dob">Date of Birth</label>
-              <input class="input" type="date" id="dob" name="dob"
-                     value="{{ user.dob if user and user.dob else '' }}">
+              <input
+                class="input"
+                type="date"
+                id="dob"
+                name="dob"
+                value="{{ user.dob if user and user.dob else '' }}"
+              />
             </div>
           </div>
 
+          <!-- Next IPPT Date -->
           <div class="row">
             <div class="pill">Next IPPT Date</div>
             <div>
               <label class="sr-only" for="next_ippt_date">Next IPPT Date</label>
-              <input class="input" type="date" id="next_ippt_date" name="next_ippt_date"
-                     value="{{ user.next_ippt_date if user and user.next_ippt_date else '' }}">
+              <input
+                class="input"
+                type="date"
+                id="next_ippt_date"
+                name="next_ippt_date"
+                value="{{ user.next_ippt_date if user and user.next_ippt_date else '' }}"
+              />
             </div>
           </div>
 
+          <!-- Last IPPT Test score -->
           <div class="row">
             <div class="pill">Last IPPT Test score</div>
             <div>
               <label class="sr-only" for="last_ippt_score">Last IPPT Test score</label>
               <select class="select" id="last_ippt_score" name="last_ippt_score">
-                <option value="" {% if not user or not user.last_ippt_score %}selected{% endif %}>Select result</option>
-                <option value="not_taken" {% if user and user.last_ippt_score=='not_taken' %}selected{% endif %}>Not taken yet</option>
-                <option value="fail" {% if user and user.last_ippt_score=='fail' %}selected{% endif %}>Fail</option>
-                <option value="pass" {% if user and user.last_ippt_score=='pass' %}selected{% endif %}>Pass</option>
-                <option value="silver" {% if user and user.last_ippt_score=='silver' %}selected{% endif %}>Silver</option>
-                <option value="gold" {% if user and user.last_ippt_score=='gold' %}selected{% endif %}>Gold</option>
+                <option value="" {% if not user or not user.last_ippt_score %}selected{% endif %}>
+                  Select result
+                </option>
+                <option value="not_taken" {% if user and user.last_ippt_score=='not_taken' %}selected{% endif %}>
+                  Not taken yet
+                </option>
+                <option value="fail" {% if user and user.last_ippt_score=='fail' %}selected{% endif %}>
+                  Fail
+                </option>
+                <option value="pass" {% if user and user.last_ippt_score=='pass' %}selected{% endif %}>
+                  Pass
+                </option>
+                <option value="silver" {% if user and user.last_ippt_score=='silver' %}selected{% endif %}>
+                  Silver
+                </option>
+                <option value="gold" {% if user and user.last_ippt_score=='gold' %}selected{% endif %}>
+                  Gold
+                </option>
               </select>
             </div>
           </div>
-
         </div>
 
         <div class="actions">
-          <!-- Change this to your real profile route -->
+          <!-- Change to your real route if needed -->
           <a class="btn" href="/profile">Cancel</a>
           <button class="btn primary" type="submit">Save</button>
         </div>

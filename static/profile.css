@@ -1,9 +1,17 @@
-/* Optional: only use track background here if base.html doesn't already do it */
+/* ===== Track background ===== */
 .track-bg {
-  /* background: url("/static/images/track-bg.jpg") center/cover no-repeat; */
   min-height: 100vh;
+
+  /* Update this path to your real file:
+     Example: /static/images/track-bg.jpg
+  */
+  background-image: url("/static/home_backgrnd/Track.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
+/* ===== Dark overlay layer ===== */
 .overlay {
   min-height: 100vh;
   background: rgba(0, 0, 0, 0.70);
@@ -13,6 +21,7 @@
   align-items: flex-start;
 }
 
+/* ===== Main card ===== */
 .card {
   width: 100%;
   max-width: 900px;
@@ -32,6 +41,7 @@
   letter-spacing: 0.3px;
 }
 
+/* ===== Rows ===== */
 .rows {
   display: flex;
   flex-direction: column;
@@ -52,6 +62,7 @@
   }
 }
 
+/* ===== Left pill labels ===== */
 .pill {
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -62,6 +73,7 @@
   font-weight: 500;
 }
 
+/* ===== Inputs ===== */
 .input,
 .select {
   width: 100%;
@@ -80,16 +92,18 @@
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12);
 }
 
-/* Helps date picker look right on dark backgrounds (browser-dependent) */
+/* Helps date picker look correct on dark backgrounds */
 input[type="date"] {
   color-scheme: dark;
 }
 
+/* Dropdown option colors */
 .select option {
   background: #111;
   color: #fff;
 }
 
+/* ===== Buttons ===== */
 .actions {
   margin-top: 28px;
   display: flex;
@@ -122,7 +136,7 @@ input[type="date"] {
   background: rgba(255, 255, 255, 0.22);
 }
 
-/* Screen-reader only label */
+/* Screen-reader only */
 .sr-only {
   position: absolute;
   width: 1px;
