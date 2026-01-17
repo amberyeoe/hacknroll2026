@@ -10,9 +10,10 @@
 <div class="workout-bg">
   <div class="workout-page">
 
-    <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-  <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
-    <h3 class="text-center mb-4">Submit Workout</h3>
+    <div class="topbar">
+      <h1 class="page-title">Log Workout</h1>
+      <a class="home-link" href="{{ url_for('home') }}">home</a>
+    </div>
 
     <form class="workout-form" method="POST" action="">
 
@@ -24,7 +25,7 @@
               <button type="button" class="action-btn" id="btn-pu-start">START PUSH-UPS</button>
               <button type="button" class="mini-btn" id="btn-pu-reset">Reset</button>
             </div>
-            <p class="hint">60 seconds. Tap start, do your reps, then key in your score.</p>
+            <p class="hint">60 seconds. Full-screen countdown (3-2-1-GO).</p>
             <p class="status" id="pu-status" aria-live="polite">Ready.</p>
 
             <div class="progress">
@@ -51,7 +52,7 @@
               <button type="button" class="action-btn" id="btn-su-start">START SIT-UPS</button>
               <button type="button" class="mini-btn" id="btn-su-reset">Reset</button>
             </div>
-            <p class="hint">60 seconds. Tap start, do your reps, then key in your score.</p>
+            <p class="hint">60 seconds. Full-screen countdown (3-2-1-GO).</p>
             <p class="status" id="su-status" aria-live="polite">Ready.</p>
 
             <div class="progress">
@@ -74,9 +75,7 @@
       <section class="card" id="card-run">
         <div class="card-row">
           <div class="left">
-            <button type="button" class="action-btn secondary" id="btn-run">
-              2.4 RUN TIMING
-            </button>
+            <button type="button" class="action-btn" id="btn-run">2.4 RUN TIMING</button>
             <p class="hint">Enter your timing (mm:ss).</p>
             <p class="status" id="run-status" aria-live="polite">Ready.</p>
           </div>
@@ -98,9 +97,203 @@
       <div class="save-row">
         <button class="save-btn" type="submit">SAVE WORKOUT</button>
       </div>
+
     </form>
 
   </div>
 </div>
 
+<!-- FULLSCREEN OVERLAY -->
+<div class="fs-overlay hidden" id="fs-overlay" role="dialog" aria-modal="true" aria-live="assertive">
+  <div class="fs-card">
+    <div class="fs-title" id="fs-title">Push-ups</div>
+    <div class="fs-number" id="fs-number">3</div>
+    <div class="fs-sub" id="fs-sub">GET READY</div>
+
+    <div class="fs-actions">
+      <button type="button" class="fs-btn ghost" id="fs-cancel">Cancel</button>
+      <button type="button" class="fs-btn primary hidden" id="fs-done">ENTER REPS</button>
+    </div>
+  </div>
+</div>
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  function pad2(x){ return String(x).padStart(2,"0"); }
+  function fmtMMSS(s){
+    s = Math.max(0, Math.floor(s));
+    return `${pad2(Math.floor(s/60))}:${pad2(s%60)}`;
+  }
+
+  function notifyFinish(){
+    if ("vibrate" in navigator) navigator.vibrate([180,80,180,80,320]);
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AC();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = 880;
+      g.gain.value = 0.06;
+      o.start();
+      setTimeout(()=>{ o.stop(); ctx.close(); }, 180);
+    } catch(e){}
+  }
+
+  // Overlay elements
+  const fsOverlay = document.getElementById("fs-overlay");
+  const fsTitle = document.getElementById("fs-title");
+  const fsNumber = document.getElementById("fs-number");
+  const fsSub = document.getElementById("fs-sub");
+  const fsCancel = document.getElementById("fs-cancel");
+  const fsDone = document.getElementById("fs-done");
+
+  function showOverlay(){
+    fsOverlay.classList.remove("hidden");
+    document.body.classList.add("no-scroll");
+  }
+  function hideOverlay(){
+    fsOverlay.classList.add("hidden");
+    document.body.classList.remove("no-scroll");
+    fsDone.classList.add("hidden");
+  }
+
+  // Single-running lock
+  let activeInterval = null;
+  let activeType = null; // "pu" | "su"
+  function clearTimer(){
+    if (activeInterval) clearInterval(activeInterval);
+    activeInterval = null;
+  }
+
+  function resetStation(type){
+    const isPU = (type === "pu");
+    document.getElementById(isPU ? "pu-timer" : "su-timer").textContent = "01:00";
+    document.getElementById(isPU ? "pu-status" : "su-status").textContent = "Ready.";
+    document.getElementById(isPU ? "pu-progress" : "su-progress").style.width = "0%";
+    document.getElementById(isPU ? "pushups" : "situps").disabled = true;
+  }
+
+  function cancelTimedTest(){
+    clearTimer();
+    if (activeType) resetStation(activeType);
+    activeType = null;
+    hideOverlay();
+  }
+
+  function finishTimedTest(type){
+    clearTimer();
+    const isPU = (type === "pu");
+    const timerEl = document.getElementById(isPU ? "pu-timer" : "su-timer");
+    const statusEl = document.getElementById(isPU ? "pu-status" : "su-status");
+    const barEl = document.getElementById(isPU ? "pu-progress" : "su-progress");
+    const inputEl = document.getElementById(isPU ? "pushups" : "situps");
+
+    timerEl.textContent = "FIN";
+    statusEl.textContent = "Finished! Enter your reps.";
+    barEl.style.width = "100%";
+
+    fsNumber.textContent = "FINISHED";
+    fsSub.textContent = "Tap ENTER REPS";
+    fsDone.classList.remove("hidden");
+
+    notifyFinish();
+    inputEl.disabled = false;
+  }
+
+  function startMainCountdown(type){
+    const isPU = (type === "pu");
+    const timerEl = document.getElementById(isPU ? "pu-timer" : "su-timer");
+    const statusEl = document.getElementById(isPU ? "pu-status" : "su-status");
+    const barEl = document.getElementById(isPU ? "pu-progress" : "su-progress");
+
+    const TOTAL = 60;
+    const startMs = Date.now();
+    const endMs = startMs + TOTAL * 1000;
+
+    fsSub.textContent = "TIME LEFT";
+
+    function tick(){
+      const now = Date.now();
+      const msLeft = endMs - now;
+      const secLeft = Math.max(0, Math.ceil(msLeft/1000));
+
+      fsNumber.textContent = fmtMMSS(secLeft);
+      timerEl.textContent = fmtMMSS(secLeft);
+
+      const elapsed = Math.min(TOTAL, (now - startMs)/1000);
+      barEl.style.width = `${(elapsed/TOTAL)*100}%`;
+
+      if (secLeft <= 0) finishTimedTest(type);
+    }
+
+    tick();
+    activeInterval = setInterval(tick, 100);
+    statusEl.textContent = "GO! (60s)";
+  }
+
+  function startTimedTest(type){
+    // Don’t allow starting if a timer already running
+    if (activeInterval) return;
+
+    activeType = type;
+    const label = (type === "pu") ? "Push-ups" : "Sit-ups";
+
+    const isPU = (type === "pu");
+    const statusEl = document.getElementById(isPU ? "pu-status" : "su-status");
+    const barEl = document.getElementById(isPU ? "pu-progress" : "su-progress");
+    const inputEl = document.getElementById(isPU ? "pushups" : "situps");
+
+    inputEl.disabled = true;
+    statusEl.textContent = "Get ready...";
+    barEl.style.width = "0%";
+
+    fsTitle.textContent = label;
+    fsDone.classList.add("hidden");
+    fsSub.textContent = "GET READY";
+    showOverlay();
+
+    // 3-2-1
+    let pre = 3;
+    fsNumber.textContent = String(pre);
+
+    activeInterval = setInterval(() => {
+      pre -= 1;
+      if (pre > 0) {
+        fsNumber.textContent = String(pre);
+      } else {
+        clearTimer();
+        fsNumber.textContent = "GO";
+        fsSub.textContent = "";
+        setTimeout(() => startMainCountdown(type), 500);
+      }
+    }, 1000);
+  }
+
+  // Wire buttons
+  document.getElementById("btn-pu-start").addEventListener("click", () => startTimedTest("pu"));
+  document.getElementById("btn-su-start").addEventListener("click", () => startTimedTest("su"));
+
+  document.getElementById("btn-pu-reset").addEventListener("click", () => { cancelTimedTest(); resetStation("pu"); });
+  document.getElementById("btn-su-reset").addEventListener("click", () => { cancelTimedTest(); resetStation("su"); });
+
+  fsCancel.addEventListener("click", cancelTimedTest);
+
+  fsDone.addEventListener("click", () => {
+    hideOverlay();
+    if (activeType === "pu") document.getElementById("pushups").focus();
+    if (activeType === "su") document.getElementById("situps").focus();
+    activeType = null;
+  });
+
+  document.getElementById("btn-run").addEventListener("click", () => {
+    document.getElementById("run_min").focus();
+  });
+
+  // init
+  resetStation("pu");
+  resetStation("su");
+});
+</script>
+{% endblock %}
 {% endblock %}
