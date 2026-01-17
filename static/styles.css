@@ -50,7 +50,6 @@ body{
 
 /* =========================
    SHOP: upgraded background layer
-   (only applies when you add .shop-bg)
 ========================= */
 .shop-bg{
   /* keep track background OR swap to a shop scene image if you have one */
@@ -63,13 +62,12 @@ body{
   backdrop-filter: blur(6px);
 }
 
-/* vignette + subtle pattern for depth */
+/* vignette + subtle pattern for depth (NO white dot highlight) */
 .shop-bg::after{
   content: "";
   position: absolute;
   inset: -70px;
   background:
-    radial-gradient(circle at 50% 25%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 42%),
     radial-gradient(circle at 50% 40%, rgba(0,0,0,0) 42%, rgba(0,0,0,0.24) 100%),
     repeating-linear-gradient(
       45deg,
