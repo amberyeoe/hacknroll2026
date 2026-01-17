@@ -149,44 +149,64 @@
   }
 
   // ===== Click handler =====
-  document.querySelectorAll('.buy-btn').forEach(button => {
-    button.addEventListener('click', function() {
-      const itemUrl = this.getAttribute('data-new-avatar');
-      const price = parseInt(this.getAttribute('data-price') || "0", 10);
+ document.querySelectorAll('.buy-btn').forEach(button => {
+  button.addEventListener('click', async function() {  // <-- make async
+    const itemUrl = this.getAttribute('data-new-avatar');
+    const price = parseInt(this.getAttribute('data-price') || "0", 10);
 
-      // A) BUY new item (auto-equip)
-      if (!ownedItems.has(itemUrl)) {
-        if (currentCredits < price) {
-          showToast("Insufficient Credits!");
+    // A) BUY new item (auto-equip)
+    if (!ownedItems.has(itemUrl)) {
+      if (currentCredits < price) {
+        showToast("Insufficient Credits!");
+        return;
+      }
+
+      try {
+        // ---- SEND TO FLASK ----
+        const res = await fetch("/purchase_items", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ avatar_path: itemUrl, price: price })
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+          showToast(data.message || "Purchase failed!");
           return;
         }
 
-        currentCredits -= price;
+        // ---- UPDATE UI ----
+        currentCredits = data.credits;  // use updated credits from DB
         creditsDisplay.innerText = currentCredits;
 
         ownedItems.add(itemUrl);
         equippedItems.add(itemUrl);
         syncAvatarPreview(itemUrl);
         updateButtons();
-        return;
+
+      } catch (err) {
+        console.error(err);
+        showToast("Error connecting to server!");
       }
 
-      // B) Toggle EQUIP / UNEQUIP (multi-equip)
-      if (equippedItems.has(itemUrl)) {
-        equippedItems.delete(itemUrl);
-        if (mainAvatar.src.includes(itemUrl)) {
-          syncAvatarPreview(null);
-        }
-      } else {
-        equippedItems.add(itemUrl);
-        syncAvatarPreview(itemUrl);
-      }
+      return;
+    }
 
-      updateButtons();
-    });
+    // B) Toggle EQUIP / UNEQUIP (multi-equip)
+    if (equippedItems.has(itemUrl)) {
+      equippedItems.delete(itemUrl);
+      if (mainAvatar.src.includes(itemUrl)) {
+        syncAvatarPreview(null);
+      }
+    } else {
+      equippedItems.add(itemUrl);
+      syncAvatarPreview(itemUrl);
+    }
+
+    updateButtons();
   });
-
-  updateButtons();
+});
 </script>
 {% endblock %}
 
