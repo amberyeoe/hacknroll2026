@@ -16,95 +16,86 @@
     </div>
 
     <form class="workout-form" method="POST" action="">
-      <!-- Push-ups -->
-      <section class="card">
+
+      <!-- PUSH UPS -->
+      <section class="card" id="card-pu">
         <div class="card-row">
           <div class="left">
-            <button type="button" class="action-btn" id="btn-pushups">
-              START PUSH-UPS
-            </button>
-            <p class="hint">After you finish, key in your reps.</p>
+            <div class="btn-row">
+              <button type="button" class="action-btn" id="btn-pu-start">START PUSH-UPS</button>
+              <button type="button" class="mini-btn" id="btn-pu-reset">Reset</button>
+            </div>
+            <p class="hint">60 seconds. Tap start, do your reps, then key in your score.</p>
+            <p class="status" id="pu-status" aria-live="polite">Ready.</p>
+
+            <div class="progress">
+              <div class="progress-bar" id="pu-progress" style="width:0%"></div>
+            </div>
           </div>
 
           <div class="right">
-            <input
-              class="big-input"
-              type="number"
-              name="pushups"
-              id="pushups"
-              min="0"
-              placeholder="0"
-              inputmode="numeric"
-            >
+            <div class="timer-box" id="pu-timer">01:00</div>
+            <div class="small-label">time remaining</div>
+
+            <input class="big-input" type="number" name="pushups" id="pushups"
+                   min="0" placeholder="0" inputmode="numeric" disabled>
             <div class="big-label">push-ups</div>
           </div>
         </div>
       </section>
 
-      <!-- Sit-ups -->
-      <section class="card">
+      <!-- SIT UPS -->
+      <section class="card" id="card-su">
         <div class="card-row">
           <div class="left">
-            <button type="button" class="action-btn" id="btn-situps">
-              START SIT-UPS
-            </button>
-            <p class="hint">After you finish, key in your reps.</p>
+            <div class="btn-row">
+              <button type="button" class="action-btn" id="btn-su-start">START SIT-UPS</button>
+              <button type="button" class="mini-btn" id="btn-su-reset">Reset</button>
+            </div>
+            <p class="hint">60 seconds. Tap start, do your reps, then key in your score.</p>
+            <p class="status" id="su-status" aria-live="polite">Ready.</p>
+
+            <div class="progress">
+              <div class="progress-bar" id="su-progress" style="width:0%"></div>
+            </div>
           </div>
 
           <div class="right">
-            <input
-              class="big-input"
-              type="number"
-              name="situps"
-              id="situps"
-              min="0"
-              placeholder="0"
-              inputmode="numeric"
-            >
+            <div class="timer-box" id="su-timer">01:00</div>
+            <div class="small-label">time remaining</div>
+
+            <input class="big-input" type="number" name="situps" id="situps"
+                   min="0" placeholder="0" inputmode="numeric" disabled>
             <div class="big-label">sit-ups</div>
           </div>
         </div>
       </section>
 
-      <!-- 2.4KM Run -->
-      <section class="card">
+      <!-- RUN (manual input only) -->
+      <section class="card" id="card-run">
         <div class="card-row">
           <div class="left">
             <button type="button" class="action-btn secondary" id="btn-run">
-              START 2.4KM RUN
+              2.4 RUN TIMING
             </button>
             <p class="hint">Enter your timing (mm:ss).</p>
+            <p class="status" id="run-status" aria-live="polite">Ready.</p>
           </div>
 
           <div class="right">
             <div class="time-input">
-              <input
-                class="time-box"
-                type="number"
-                name="run_min"
-                id="run_min"
-                min="0"
-                placeholder="14"
-                inputmode="numeric"
-              >
+              <input class="time-box" type="number" name="run_min" id="run_min"
+                     min="0" placeholder="14" inputmode="numeric">
               <span class="time-sep">:</span>
-              <input
-                class="time-box"
-                type="number"
-                name="run_sec"
-                id="run_sec"
-                min="0"
-                max="59"
-                placeholder="40"
-                inputmode="numeric"
-              >
+              <input class="time-box" type="number" name="run_sec" id="run_sec"
+                     min="0" max="59" placeholder="40" inputmode="numeric">
             </div>
             <div class="big-label">2.4km time</div>
           </div>
         </div>
       </section>
 
-      <!-- Save -->
+      <!-- SAVE -->
       <div class="save-row">
         <button class="save-btn" type="submit">SAVE WORKOUT</button>
       </div>
@@ -114,15 +105,174 @@
 </div>
 
 <script>
-  // Optional UX: focus the relevant input when the button is tapped
-  document.getElementById("btn-pushups").addEventListener("click", () => {
-    document.getElementById("pushups").focus();
+  // ---------------------------
+  // Helpers
+  // ---------------------------
+  function pad2(x) { return String(x).padStart(2, "0"); }
+  function fmtMMSS(totalSeconds) {
+    totalSeconds = Math.max(0, Math.floor(totalSeconds));
+    const mm = Math.floor(totalSeconds / 60);
+    const ss = totalSeconds % 60;
+    return `${pad2(mm)}:${pad2(ss)}`;
+  }
+  function canVibrate() { return ("vibrate" in navigator); }
+
+  function notifyFinish() {
+    if (canVibrate()) navigator.vibrate([180, 80, 180, 80, 320]);
+
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type = "sine";
+      o.frequency.value = 880;
+      g.gain.value = 0.06;
+      o.start();
+      setTimeout(() => { o.stop(); ctx.close(); }, 180);
+    } catch (e) {}
+  }
+
+  // ---------------------------
+  // Lock so only one timer runs at once
+  // ---------------------------
+  let mode = "idle"; // "idle" | "pu" | "su"
+  function setMode(newMode) {
+    mode = newMode;
+    const puStart = document.getElementById("btn-pu-start");
+    const suStart = document.getElementById("btn-su-start");
+    const idle = (mode === "idle");
+    puStart.disabled = !idle && mode !== "pu";
+    suStart.disabled = !idle && mode !== "su";
+  }
+  setMode("idle");
+
+  // ---------------------------
+  // Countdown with 3-2-1 pre-countdown
+  // ---------------------------
+  function createCountdown(opts) {
+    const startBtn = document.getElementById(opts.startBtnId);
+    const resetBtn = document.getElementById(opts.resetBtnId);
+    const timerEl = document.getElementById(opts.timerId);
+    const statusEl = document.getElementById(opts.statusId);
+    const inputEl = document.getElementById(opts.inputId);
+    const barEl = document.getElementById(opts.progressId);
+
+    const WORK_SEC = 60;
+    const PRE_SEC = 3;
+
+    let preInterval = null;
+    let workInterval = null;
+    let running = false;
+
+    function resetUI() {
+      timerEl.textContent = "01:00";
+      statusEl.textContent = "Ready.";
+      barEl.style.width = "0%";
+      inputEl.disabled = true;
+      running = false;
+    }
+
+    function stopAll() {
+      if (preInterval) clearInterval(preInterval);
+      if (workInterval) clearInterval(workInterval);
+      preInterval = null;
+      workInterval = null;
+      running = false;
+      if (mode === opts.modeName) setMode("idle");
+    }
+
+    function startPre() {
+      if (mode !== "idle" && mode !== opts.modeName) return;
+      if (running) return;
+
+      setMode(opts.modeName);
+      running = true;
+      inputEl.disabled = true;
+
+      statusEl.textContent = "Get ready...";
+      barEl.style.width = "0%";
+
+      let t = PRE_SEC;
+      timerEl.textContent = `00:0${t}`;
+
+      preInterval = setInterval(() => {
+        t -= 1;
+        if (t > 0) timerEl.textContent = `00:0${t}`;
+        else {
+          clearInterval(preInterval);
+          preInterval = null;
+          startWork();
+        }
+      }, 1000);
+    }
+
+    function startWork() {
+      statusEl.textContent = "GO! (60s)";
+      const startMs = Date.now();
+      const endMs = startMs + WORK_SEC * 1000;
+
+      function tick() {
+        const now = Date.now();
+        const msLeft = endMs - now;
+        const secLeft = Math.max(0, Math.ceil(msLeft / 1000));
+        timerEl.textContent = fmtMMSS(secLeft);
+
+        const elapsed = Math.min(WORK_SEC, (now - startMs) / 1000);
+        barEl.style.width = `${(elapsed / WORK_SEC) * 100}%`;
+
+        if (secLeft <= 0) finish();
+      }
+
+      tick();
+      workInterval = setInterval(tick, 100);
+    }
+
+    function finish() {
+      if (workInterval) clearInterval(workInterval);
+      workInterval = null;
+
+      timerEl.textContent = "FIN";
+      statusEl.textContent = "Finished! Enter your reps.";
+      barEl.style.width = "100%";
+
+      notifyFinish();
+
+      inputEl.disabled = false;
+      inputEl.focus();
+
+      running = false;
+      setMode("idle");
+    }
+
+    startBtn.addEventListener("click", startPre);
+    resetBtn.addEventListener("click", () => { stopAll(); resetUI(); });
+
+    resetUI();
+  }
+
+  createCountdown({
+    modeName: "pu",
+    startBtnId: "btn-pu-start",
+    resetBtnId: "btn-pu-reset",
+    timerId: "pu-timer",
+    statusId: "pu-status",
+    inputId: "pushups",
+    progressId: "pu-progress"
   });
 
-  document.getElementById("btn-situps").addEventListener("click", () => {
-    document.getElementById("situps").focus();
+  createCountdown({
+    modeName: "su",
+    startBtnId: "btn-su-start",
+    resetBtnId: "btn-su-reset",
+    timerId: "su-timer",
+    statusId: "su-status",
+    inputId: "situps",
+    progressId: "su-progress"
   });
 
+  // Run button just focuses inputs
   document.getElementById("btn-run").addEventListener("click", () => {
     document.getElementById("run_min").focus();
   });
