@@ -236,7 +236,13 @@ def logout():
 @app.route("/shop")
 @login_required
 def shop():
-    return render_template("shop.html", credits=360)
+    db = get_db()
+    row = db.execute(
+            "SELECT credits FROM profiles WHERE user_id = ?", 
+            (current_user.id,)
+    ).fetchone()
+    credits = row["credits"] if row else 0
+    return render_template("shop.html", credits=credits)
 
 
 @app.route("/tracker")
