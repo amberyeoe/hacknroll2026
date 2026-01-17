@@ -1,12 +1,12 @@
 * { box-sizing: border-box; }
 
 :root{
-  --card: rgba(255,255,255,0.80);
-  --border: rgba(0,0,0,0.09);
+  --card: rgba(255,255,255,0.82);
+  --border: rgba(0,0,0,0.10);
   --text: #0f172a;
   --muted: rgba(15,23,42,0.68);
-  --shadow: 0 10px 30px rgba(2,6,23,0.08);
-  --shadow2: 0 6px 18px rgba(2,6,23,0.06);
+  --shadow: 0 12px 34px rgba(2,6,23,0.12);
+  --shadow2: 0 6px 18px rgba(2,6,23,0.08);
 }
 
 /* =========================
@@ -20,7 +20,7 @@ body{
 }
 
 /* =========================
-   Background (Shop Stadium)
+   Background (Base)
 ========================= */
 .workout-bg{
   min-height: 100vh;
@@ -32,7 +32,7 @@ body{
   overflow: hidden;
 }
 
-/* glass overlay */
+/* default overlay (other pages can keep this) */
 .workout-bg::before{
   content: "";
   position: absolute;
@@ -49,6 +49,40 @@ body{
 }
 
 /* =========================
+   SHOP: upgraded background layer
+   (only applies when you add .shop-bg)
+========================= */
+.shop-bg{
+  /* keep track background OR swap to a shop scene image if you have one */
+  /* background-image: url("/static/home_backgrnd/Shop.png"); */
+}
+
+/* stronger, nicer "glass" but not washed out */
+.shop-bg::before{
+  background: rgba(255,255,255,0.32);
+  backdrop-filter: blur(6px);
+}
+
+/* vignette + subtle pattern for depth */
+.shop-bg::after{
+  content: "";
+  position: absolute;
+  inset: -70px;
+  background:
+    radial-gradient(circle at 50% 25%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 42%),
+    radial-gradient(circle at 50% 40%, rgba(0,0,0,0) 42%, rgba(0,0,0,0.24) 100%),
+    repeating-linear-gradient(
+      45deg,
+      rgba(15,23,42,0.045) 0px,
+      rgba(15,23,42,0.045) 2px,
+      transparent 2px,
+      transparent 12px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* =========================
    Layout
 ========================= */
 .page{
@@ -57,9 +91,14 @@ body{
   margin: 0 auto;
 }
 
+.page--shop{
+  padding-top: 18px;
+}
+
 .h1{
   margin: 0 0 4px 0;
   font-size: 40px;
+  letter-spacing: -0.5px;
 }
 
 .muted{
@@ -67,32 +106,74 @@ body{
   font-size: 13px;
 }
 
-.center{ text-align: center; }
 .mt{ margin-top: 14px; }
 
 /* =========================
-   Topbar (CENTERED TITLE)
+   Topbar
 ========================= */
 .topbar{
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
+  gap: 10px;
 }
 
-.topbar-left{
+.topbar-center{
   text-align: center;
 }
 
+/* Credits pill (dashboard style, still clean) */
 .credits-pill{
   position: absolute;
   right: 0;
-  padding: 8px 12px;
+  top: 0;
+  background-color: #FCD34D;
+  color: #000;
+  font-size: 14px;
+  font-weight: 900;
+  border: 2px solid rgba(0,0,0,0.85);
   border-radius: 999px;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,0.75);
-  font-size: 13px;
-  box-shadow: var(--shadow2);
+  padding: 8px 14px;
+  box-shadow: 2px 4px 0px rgba(0,0,0,0.18);
+}
+
+/* Mobile: stack credits under title */
+@media (max-width: 600px) {
+  .credits-pill{
+    position: relative;
+    right: auto;
+    top: auto;
+    margin-top: 10px;
+  }
+}
+
+/* =========================
+   Toast
+========================= */
+.toast {
+  visibility: hidden;
+  min-width: 250px;
+  background-color: #ff3b30;
+  color: #fff;
+  text-align: center;
+  border-radius: 10px;
+  padding: 14px 16px;
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  font-size: 15px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+  opacity: 0;
+  transition: opacity 0.25s, bottom 0.25s;
+}
+
+.toast.show {
+  visibility: visible;
+  opacity: 1;
+  bottom: 52px;
 }
 
 /* =========================
@@ -105,20 +186,75 @@ body{
 }
 
 .avatar-card{
-  max-width: 420px;
+  max-width: 460px;
   width: 100%;
-  padding: 14px;
-  border-radius: 18px;
+  padding: 16px;
+  border-radius: 20px;
   background: var(--card);
   box-shadow: var(--shadow);
+  border: 1px solid rgba(255,255,255,0.55);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  position: relative;
+}
+
+.avatar-wrap{
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+}
+
+.avatar-img{
+  width: 270px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.25s ease;
+  filter: drop-shadow(0 14px 18px rgba(0,0,0,0.18));
+}
+
+/* shadow / stage to prevent "floating" */
+.avatar-stage{
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  width: min(320px, 78%);
+  height: 34px;
+  border-radius: 999px;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.22), rgba(0,0,0,0) 70%);
+  filter: blur(2px);
+  opacity: 0.75;
+  pointer-events: none;
 }
 
 /* =========================
-   Shop
+   Tier badge (basic styling)
+========================= */
+.tier-badge{
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-weight: 1000;
+  font-size: 12px;
+  letter-spacing: 0.8px;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: rgba(255,255,255,0.85);
+  box-shadow: var(--shadow2);
+}
+
+.tier-badge--bronze{ background: rgba(205,127,50,0.22); }
+.tier-badge--silver{ background: rgba(192,192,192,0.28); }
+.tier-badge--gold{ background: rgba(255,215,0,0.28); }
+
+/* =========================
+   Shop header
 ========================= */
 .shop-header{
   margin-top: 16px;
@@ -133,8 +269,12 @@ body{
   color: white;
   background: linear-gradient(180deg, #8a5c2d, #5c3718);
   border-radius: 14px;
+  box-shadow: var(--shadow2);
 }
 
+/* =========================
+   Shop grid + tiles
+========================= */
 .shop-grid{
   margin-top: 14px;
   display: grid;
@@ -145,7 +285,15 @@ body{
 .shop-tile{
   border-radius: 18px;
   padding: 10px;
-  background: linear-gradient(180deg, rgba(120,82,42,0.28), rgba(120,82,42,0.12));
+  background: linear-gradient(180deg, rgba(120,82,42,0.22), rgba(120,82,42,0.10));
+  box-shadow: var(--shadow2);
+  border: 1px solid rgba(255,255,255,0.25);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.shop-tile:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(2,6,23,0.14);
 }
 
 .tile-inner{
@@ -155,26 +303,67 @@ body{
   text-align: center;
 }
 
+.tile-img{
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.14);
+}
+
 .tile-name{
-  font-weight: 900;
+  font-weight: 1000;
 }
 
 .tile-desc{
   font-size: 12px;
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 .tile-footer{
   margin-top: 10px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 10px;
 }
 
+.tile-price{
+  font-weight: 900;
+}
+
+/* =========================
+   Buttons + states
+========================= */
 .buy-btn{
-  padding: 8px 12px;
+  padding: 9px 12px;
   border-radius: 12px;
   border: none;
-  font-weight: 900;
+  font-weight: 1000;
   color: white;
   background: linear-gradient(180deg, #ff7a18, #e95610);
+  cursor: pointer;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.16);
+  transition: transform 0.14s ease, filter 0.14s ease;
+}
+
+.buy-btn:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+.buy-btn:active{
+  transform: translateY(0px);
+}
+
+.buy-btn.owned{
+  background: linear-gradient(180deg, #36c06a, #1f9d52);
+}
+
+.buy-btn.equipped{
+  background: linear-gradient(180deg, #666, #3f3f3f);
 }
