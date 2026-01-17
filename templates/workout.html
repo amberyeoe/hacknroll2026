@@ -11,7 +11,9 @@
   <div class="workout-page">
 
     <div class="topbar">
-      <h1 class="page-title">Log Workout</h1>
+      <div class="title-banner">
+        <h1 class="page-title">Log Workout</h1>
+      </div>
       <a href="{{ url_for('home') }}" class="dash-btn">Dashboard</a>
     </div>
 
@@ -116,6 +118,7 @@
     </div>
   </div>
 </div>
+
 {% block scripts %}
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -159,7 +162,6 @@ document.addEventListener("DOMContentLoaded", () => {
     fsDone.classList.add("hidden");
   }
 
-
   // Single-running lock
   let activeInterval = null;
   let activeType = null; // "pu" | "su"
@@ -193,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     timerEl.textContent = "DONE";
     statusEl.textContent = "Finished! Enter your reps.";
-    barEl.style.width = "100%"; 
+    barEl.style.width = "100%";
 
     fsNumber.textContent = "FINISHED";
     fsSub.textContent = "Tap ENTER REPS";
@@ -211,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const statusEl = document.getElementById(isPU ? "pu-status" : "su-status");
     const barEl = document.getElementById(isPU ? "pu-progress" : "su-progress");
 
-    const TOTAL = 1; //60!!!!!!!
+    const TOTAL = 1; // 60 in production
     const startMs = Date.now();
     const endMs = startMs + TOTAL * 1000;
 
