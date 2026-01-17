@@ -61,9 +61,11 @@ def create_tables():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS profiles (
             user_id INTEGER PRIMARY KEY,
-            points INTEGER DEFAULT 0,
+            xp INTEGER DEFAULT 0,
+            credits INTEGER DEFAULT 0,
             dob DATE,
             goal TEXT,
+            avatar_path TEXT DEFAULT '../static/avatar/default.jpg',
             next_ippt_date DATE,
             prev_ippt_score INTEGER,
             FOREIGN KEY(user_id) REFERENCES users(id)
@@ -173,7 +175,11 @@ def shop():
 @app.route("/tracker")
 @login_required
 def tracker():
-    return render_template("tracker.html")
+    db = get_db()
+    results = db.execute("SELECT test_date, score FROM ippt_results ORDER BY test_date").fetchall()
+    dates = [row[0].strftime("%Y-%m-%d") for row in results]
+    scores = [row[1] for row in results]
+    return render_template("tracker.html", dates=dates, scores=scores)
 
 
 @app.route("/workout")
@@ -222,10 +228,10 @@ def leaderboard():
     db = get_db()
     # Get all users and points, sorted descending
     users_points = db.execute("""
-        SELECT users.username, profiles.points
+        SELECT users.username, profiles.xp
         FROM profiles
         JOIN users ON profiles.user_id = users.id
-        ORDER BY profiles.points DESC
+        ORDER BY profiles.xp DESC
     """).fetchall()
 
     return render_template("leaderboard.html", users_points=users_points)
