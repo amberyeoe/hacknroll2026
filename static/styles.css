@@ -50,7 +50,6 @@ body{
 
 /* =========================
    SHOP: upgraded background layer
-   (only applies when you add .shop-bg)
 ========================= */
 .shop-bg{
   /* keep track background OR swap to a shop scene image if you have one */
@@ -63,14 +62,16 @@ body{
   backdrop-filter: blur(6px);
 }
 
-/* vignette + subtle pattern for depth */
+/* vignette + subtle pattern for depth (NO white dot highlight) */
+/* vignette + subtle pattern for depth (NO white dot highlight) */
 .shop-bg::after{
   content: "";
   position: absolute;
   inset: -70px;
   background:
-    radial-gradient(circle at 50% 25%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 42%),
+    /* keep vignette */
     radial-gradient(circle at 50% 40%, rgba(0,0,0,0) 42%, rgba(0,0,0,0.24) 100%),
+    /* keep diagonal pattern */
     repeating-linear-gradient(
       45deg,
       rgba(15,23,42,0.045) 0px,
@@ -177,7 +178,7 @@ body{
 }
 
 /* =========================
-   Avatar
+   Avatar (Option 1: no outer white card)
 ========================= */
 .avatar-section{
   margin-top: 18px;
@@ -185,55 +186,83 @@ body{
   justify-content: center;
 }
 
+/* Remove big white rounded card */
 .avatar-card{
-  max-width: 460px;
+  max-width: 520px;
   width: 100%;
-  padding: 16px;
-  border-radius: 20px;
-  background: var(--card);
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(255,255,255,0.55);
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   position: relative;
 }
 
+/* Clean stage + spotlight */
 .avatar-wrap{
   position: relative;
   width: 100%;
   display: flex;
   justify-content: center;
-  padding-top: 6px;
+  padding: 26px 0 16px;
 }
 
+/* Spotlight glow behind the avatar */
+.avatar-wrap::before{
+  content: "";
+  position: absolute;
+  width: min(520px, 92%);
+  height: min(520px, 92%);
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(circle at 50% 34%,
+      rgba(255,255,255,0.95) 0%,
+      rgba(255,255,255,0.55) 32%,
+      rgba(255,255,255,0.20) 50%,
+      rgba(255,255,255,0.00) 72%
+    );
+  filter: blur(2px);
+  opacity: 0.95;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Avatar above spotlight */
 .avatar-img{
+  position: relative;
+  z-index: 1;
   width: 270px;
   max-width: 100%;
   height: auto;
   display: block;
+  border-radius: 16px;
   transition: transform 0.25s ease;
   filter: drop-shadow(0 14px 18px rgba(0,0,0,0.18));
 }
 
-/* shadow / stage to prevent "floating" */
+/* floor shadow */
 .avatar-stage{
   position: absolute;
   left: 50%;
-  bottom: 10px;
+  bottom: 14px;
   transform: translateX(-50%);
-  width: min(320px, 78%);
-  height: 34px;
+  width: min(360px, 82%);
+  height: 40px;
   border-radius: 999px;
-  background: radial-gradient(ellipse at center, rgba(0,0,0,0.22), rgba(0,0,0,0) 70%);
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.20), rgba(0,0,0,0) 70%);
   filter: blur(2px);
-  opacity: 0.75;
+  opacity: 0.65;
   pointer-events: none;
+  z-index: 1;
 }
 
 /* =========================
-   Tier badge (basic styling)
+   Tier badge
 ========================= */
 .tier-badge{
   position: absolute;
