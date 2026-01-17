@@ -217,6 +217,32 @@ body{
   filter: drop-shadow(0 14px 18px rgba(0,0,0,0.18));
 }
 
+/* ===== NEW: Overlay stacking support ===== */
+.avatar-stack{
+  position: relative;
+  display: inline-block; /* container sizes itself to the base image */
+}
+
+.avatar-base{
+  position: relative;
+  z-index: 1; /* base under overlays */
+}
+
+.avatar-overlay{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.avatar-overlay.is-hidden{
+  display: none;
+}
+/* ===== END overlay stacking ===== */
+
 /* shadow / stage to prevent "floating" */
 .avatar-stage{
   position: absolute;
