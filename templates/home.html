@@ -1,17 +1,76 @@
-
 {% extends "base.html" %}
 
-{% block title %}
-home
-{% endblock %}
+{% block title %}Home{% endblock %}
 
+{% block css %}
+
+<link rel="stylesheet" href="../static/dashboard.css">{% endblock %}
 {% block content %}
+<div class="dash-wrap">
+  <div class="dash">
 
-   
-    
-    <h1>welcome to home</h1>
-    <a href= "{{ url_for('home') }}">home</a>
-   
+    <section class="dash-left">
+      <div class="dash-title">LATEST IPPT</div>
 
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-value">{{ pushups | default(25) }}</div>
+          <div class="metric-label">PUSH-UPS</div>
+        </div>
 
+        <div class="metric">
+          <div class="metric-value">{{ situps | default(25) }}</div>
+          <div class="metric-label">SIT-UPS</div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-value">{{ run_time | default('14:40') }}</div>
+          <div class="metric-label">2.4 KM RUN</div>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-label">SCORE:</div>
+        <div class="info-value">{{ score | default(60) }}</div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-label">CURRENT IPPT STATUS:</div>
+        {% set status_val = status | default('PASS') %}
+        <div class="info-value status {{ 'pass' if status_val == 'PASS' else 'fail' }}">
+          {{ status_val }}
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="info-row">
+        <div class="info-label">CREDITS:</div>
+        <div class="info-value">{{ credits | default(300) }}</div>
+      </div>
+
+      <div class="xp-row">
+        <div class="info-label">XP:</div>
+        <div class="xp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+          <div class="xp-fill" style="width: {{ xp_percent | default(55) }}%;"></div>
+        </div>
+      </div>
+
+      <div class="tiny">
+        Lvl {{ level | default(3) }} • {{ xp | default(260) }}/{{ xp_to_next | default(500) }}
+      </div>
+    </section>
+
+    <aside class="dash-right">
+      <div class="avatar-frame">
+        {% if avatar_url %}
+          <img src="{{ avatar_url }}" alt="Avatar" class="avatar-img">
+        {% else %}
+          <div class="avatar-placeholder">AVATAR</div>
+        {% endif %}
+      </div>
+    </aside>
+
+  </div>
+</div>
 {% endblock %}
