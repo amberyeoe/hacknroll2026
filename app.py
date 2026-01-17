@@ -11,7 +11,7 @@ DATABASE = "database.db"
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "login"
+login_manager.login_view = "login_page"
 
 class User(UserMixin):
     def __init__(self, id, username):
@@ -61,9 +61,10 @@ def create_tables():
 #ROUTES
 # check
 @app.route("/") 
-def base():
-    return render_template("base.html")
-
+def index():
+    if current_user.is_authenticated:
+        return redirect(url_for("home"))
+    return redirect(url_for("login_page"))
 # @app.route("/")
 # def home():
 #     if current_user.is_authenticated:
@@ -75,6 +76,7 @@ def base():
 # login_manager.login_view = "login"
 
 @app.route("/home")
+@login_required
 def home():
     return render_template("home.html")
 
@@ -100,7 +102,7 @@ def register():
     return render_template("register.html")
 
 @app.route("/login", methods=["GET", "POST"])
-def login():
+def login_page():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -119,8 +121,14 @@ def login():
 
     return render_template("login.html")
 
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("login_page"))
 
 @app.route("/shop")
+@login_required
 def shop():
     return render_template("shop.html")
 
@@ -132,10 +140,12 @@ def tracker():
 
 
 @app.route("/workout")
+@login_required
 def workout():
     return render_template("workout.html")
 
 @app.route("/leaderboard")
+@login_required
 def leaderboard():
     return render_template("leaderboard.html")
 
