@@ -318,14 +318,14 @@
 
 /* During 60s countdown: switch backgrounds per test */
 .fs-overlay.countdown-pu {
-  background-image: url("home_backgrnd/pushup_bg.png");
+  background-image: url("workout/pushup.jpg");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
 }
 
 .fs-overlay.countdown-su {
-  background-image: url("home_backgrnd/situp_bg.png");
+  background-image: url("workout/situp.jpg");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
