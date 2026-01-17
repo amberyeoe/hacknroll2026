@@ -1,4 +1,33 @@
 /* ===== Dashboard layout ===== */
+/* Dashboard button (top right) */
+.dash-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 10px 14px;
+  border-radius: 14px;
+
+  background: #111;
+  color: #fff;
+  border: 1px solid #111;
+
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+
+  box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+
+.dash-btn:hover {
+  transform: translateY(-1px);
+}
+
+.dash-btn:active {
+  transform: translateY(0px);
+}
+
 .dash-wrap{
   min-height: 100vh;
   color: #f5f5f5;
