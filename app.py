@@ -135,6 +135,11 @@ def tracker():
 def workout():
     return render_template("workout.html")
 
+@app.route("/leaderboard")
+def leaderboard():
+    return render_template("leaderboard.html")
+
+
 if __name__ == "__main__":
     with app.app_context():
         create_tables()
