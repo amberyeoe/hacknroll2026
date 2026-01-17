@@ -133,7 +133,7 @@ def home():
     xp_percent = int((xp_progress / xp_need) * 100)
 
     # Tier based on latest IPPT score
-    tier = "PASS"
+    tier = "FAIL"
     if latest_workout:
         score = latest_workout["score"]
         if score >= 85:
@@ -151,7 +151,7 @@ def home():
         score = 0
         pushups = 0
         situps = 0
-        run_time = "00:00"
+        run_time = 0
 
     avatar_url = profile["avatar_path"] if profile and profile["avatar_path"] else None
     credits = profile["credits"] if profile else 0
@@ -307,6 +307,7 @@ def workout():
 
 
         db.commit()
+        return redirect(url_for("home"))
           # or redirect somewhere
 
     return render_template("workout.html")
