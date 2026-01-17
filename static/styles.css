@@ -144,7 +144,7 @@ body{
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%) scaleX(0.85) scaleY(1.92);
+  transform: translate(-50%, -46%) scaleX(0.85) scaleY(1.92);
   /* ^ THIS is the key: scaleY makes the red banner taller to cover subtitle */
 
   width: 100%;
