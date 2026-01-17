@@ -1,20 +1,81 @@
-<!-- =========================
-     templates/shop.html
-     Replace your entire file with this
-========================= -->
 {% extends "base.html" %}
 
 {% block title %}Shop{% endblock %}
 
 {% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<style>
+  /* --- EXISTING STYLES --- */
+  .tile-img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-<link rel="stylesheet" href="../static/styles.css">{% endblock %}
+  .avatar-img {
+    width: 140px;
+    height: auto;
+    display: block;
+    margin: 0 auto 10px auto;
+    transition: 0.3s ease;
+  }
+  
+  .tile-inner {
+    padding-top: 10px;
+  }
+
+  /* --- NEW STYLES FOR BUTTONS & ERROR --- */
+  
+  /* Different colors for button states */
+  .buy-btn.owned {
+    background-color: #4CAF50; /* Green for Equip */
+    color: white;
+  }
+  
+  .buy-btn.equipped {
+    background-color: #666; /* Gray for Unequip */
+    color: white;
+  }
+
+  /* Error Toast (Popup) */
+  .toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #ff3b30; /* Red error color */
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    opacity: 0;
+    transition: opacity 0.3s, bottom 0.3s;
+  }
+
+  .toast.show {
+    visibility: visible;
+    opacity: 1;
+    bottom: 50px;
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 
 <div class="page">
 
-  <!-- Topbar -->
+  <div id="error-toast" class="toast">Insufficient Credits!</div>
+
   <div class="topbar">
     <div class="topbar-left">
       <h1 class="h1">Shop</h1>
@@ -22,11 +83,10 @@
     </div>
 
     <div class="credits-pill">
-      Credits: <b>{{ credits }}</b>
+      Credits: <b id="user-credits">{{ credits }}</b>
     </div>
   </div>
 
-  <!-- Avatar card -->
   <div class="avatar-section">
     <div class="avatar-card">
 
@@ -34,7 +94,11 @@
         {{ tier }}
       </div>
 
-      <div class="avatar avatar--{{ tier|lower }}" title="Avatar"></div>
+      <img id="main-avatar" 
+           src="static/avatar/default.jpg" 
+           data-base-src="static/avatar/default.jpg"
+           class="avatar-img" 
+           alt="Your Avatar">
 
       <div class="muted center">
         Latest score: <b>{{ latest_score }}</b>
@@ -42,83 +106,105 @@
     </div>
   </div>
 
-  <!-- GAME SHOP HEADER -->
   <div class="shop-header">
     <div class="shop-header__title">SHOP</div>
   </div>
 
-  <!-- GAME SHOP GRID -->
   <div class="shop-grid shop-grid--game">
 
     <div class="shop-tile">
       <div class="tile-inner">
-        <div class="tile-icon">🎽</div>
+        <img src="static/items/headband.png" class="tile-img" alt="Headband">
         <div class="tile-name">Headband</div>
         <div class="tile-desc">Keeps sweat off</div>
       </div>
       <div class="tile-footer">
         <div class="tile-price"><span class="coin">🪙</span> 50</div>
-        <button class="buy-btn" type="button">BUY</button>
+        <button class="buy-btn" type="button" 
+                data-price="50"
+                data-new-avatar="static/avatar/headband.png">
+          BUY
+        </button>
       </div>
     </div>
 
     <div class="shop-tile">
       <div class="tile-inner">
-        <div class="tile-icon">🎧</div>
+        <img src="{{ url_for('static', filename='items/headphones.png') }}" class="tile-img" alt="Headphones">
         <div class="tile-name">Headphones</div>
         <div class="tile-desc">Workout soundtrack</div>
       </div>
       <div class="tile-footer">
         <div class="tile-price"><span class="coin">🪙</span> 180</div>
-        <button class="buy-btn" type="button">BUY</button>
+        <button class="buy-btn" type="button" 
+                data-price="180"
+                data-new-avatar="static/avatar/headphone.png">
+          BUY
+        </button>
       </div>
     </div>
 
     <div class="shop-tile">
       <div class="tile-inner">
-        <div class="tile-icon">⌚</div>
+        <img src="{{ url_for('static', filename='items/wristband.png') }}" class="tile-img" alt="Wristband">
         <div class="tile-name">Wristband</div>
         <div class="tile-desc">Grip & comfort</div>
       </div>
       <div class="tile-footer">
         <div class="tile-price"><span class="coin">🪙</span> 60</div>
-        <button class="buy-btn" type="button">BUY</button>
+        <button class="buy-btn" type="button" 
+                data-price="60"
+                data-new-avatar="static/avatar/wristband.png">
+          BUY
+        </button>
       </div>
     </div>
 
     <div class="shop-tile">
       <div class="tile-inner">
-        <div class="tile-icon">🕒</div>
+        <img src="{{ url_for('static', filename='items/watch.png') }}" class="tile-img" alt="Sports Watch">
         <div class="tile-name">Sports Watch</div>
         <div class="tile-desc">Track your runs</div>
       </div>
       <div class="tile-footer">
         <div class="tile-price"><span class="coin">🪙</span> 220</div>
-        <button class="buy-btn" type="button">BUY</button>
+        <button class="buy-btn" type="button" 
+                data-price="220"
+                data-new-avatar="static/avatar/watch.png">
+          BUY
+        </button>
       </div>
     </div>
 
     <div class="shop-tile">
       <div class="tile-inner">
-        <div class="tile-icon">👕</div>
+        <img src="static/items/nikeshirt.png" class="tile-img" alt="Nike T-Shirt">
         <div class="tile-name">Nike T-Shirt</div>
         <div class="tile-desc">Classic training fit</div>
       </div>
       <div class="tile-footer">
         <div class="tile-price"><span class="coin">🪙</span> 140</div>
-        <button class="buy-btn" type="button">BUY</button>
+        <button class="buy-btn" type="button" 
+                data-price="140"
+                data-new-avatar="static/avatar/nikeshirt.png">
+          BUY
+        </button>
       </div>
     </div>
 
     <div class="shop-tile">
       <div class="tile-inner">
-        <div class="tile-icon">🏃</div>
+        <img src="static/items/nikesinglet.png" class="tile-img" alt="Nike Singlet">
         <div class="tile-name">Nike Singlet</div>
         <div class="tile-desc">Light & breathable</div>
       </div>
       <div class="tile-footer">
         <div class="tile-price"><span class="coin">🪙</span> 130</div>
-        <button class="buy-btn" type="button">BUY</button>
+        <button class="buy-btn" type="button" 
+                data-price="130"
+                data-new-avatar="static/avatar/nikesinglet.png">
+          BUY
+        </button>
       </div>
     </div>
 
@@ -129,5 +215,105 @@
   </div>
 
 </div>
+
+<script>
+  // 1. Initialize State
+  // We grab the credits from the HTML rendered by Jinja
+  let currentCredits = parseInt(document.getElementById('user-credits').innerText);
+  
+  // Track which items (by image URL) are owned
+  // In a real app, this would come from the database
+  let ownedItems = new Set();
+  
+  // Track currently equipped item URL
+  let currentEquippedUrl = null;
+
+  // DOM Elements
+  const creditsDisplay = document.getElementById('user-credits');
+  const mainAvatar = document.getElementById('main-avatar');
+  const baseAvatarUrl = mainAvatar.getAttribute('data-base-src');
+  const toast = document.getElementById('error-toast');
+
+  // 2. Function to show error message
+  function showToast(message) {
+    toast.innerText = message;
+    toast.className = "toast show";
+    setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+  }
+
+  // 3. Helper to update button visual state
+  function updateButtons() {
+    const buttons = document.querySelectorAll('.buy-btn');
+    
+    buttons.forEach(btn => {
+      const itemUrl = btn.getAttribute('data-new-avatar');
+      
+      // If we don't own it yet
+      if (!ownedItems.has(itemUrl)) {
+        btn.innerText = "BUY";
+        btn.classList.remove('owned', 'equipped');
+      } 
+      // If we own it...
+      else {
+        // ...and it is currently equipped
+        if (currentEquippedUrl === itemUrl) {
+          btn.innerText = "UNEQUIP";
+          btn.classList.add('equipped');
+          btn.classList.remove('owned');
+        } 
+        // ...and it is NOT equipped
+        else {
+          btn.innerText = "EQUIP";
+          btn.classList.add('owned');
+          btn.classList.remove('equipped');
+        }
+      }
+    });
+  }
+
+  // 4. Main Click Logic
+  document.querySelectorAll('.buy-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const itemUrl = this.getAttribute('data-new-avatar');
+      const price = parseInt(this.getAttribute('data-price'));
+
+      // SCENARIO A: Item is NOT owned yet (Try to Buy)
+      if (!ownedItems.has(itemUrl)) {
+        if (currentCredits >= price) {
+          // Success: Buy it
+          currentCredits -= price;
+          creditsDisplay.innerText = currentCredits; // Update UI
+          
+          ownedItems.add(itemUrl); // Mark as owned
+          
+          // Auto-equip the new item
+          currentEquippedUrl = itemUrl;
+          mainAvatar.src = itemUrl;
+          
+          updateButtons(); // Refresh all button texts
+        } else {
+          // Fail: Not enough money
+          showToast("Insufficient Credits!");
+        }
+      } 
+      
+      // SCENARIO B: Item IS owned
+      else {
+        // If it's already equipped -> UNEQUIP it
+        if (currentEquippedUrl === itemUrl) {
+          currentEquippedUrl = null;
+          mainAvatar.src = baseAvatarUrl; // Revert to base
+          updateButtons();
+        } 
+        // If it's owned but not equipped -> EQUIP it
+        else {
+          currentEquippedUrl = itemUrl;
+          mainAvatar.src = itemUrl;
+          updateButtons();
+        }
+      }
+    });
+  });
+</script>
 
 {% endblock %}

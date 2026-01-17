@@ -169,7 +169,7 @@ def logout():
 @app.route("/shop")
 @login_required
 def shop():
-    return render_template("shop.html")
+    return render_template("shop.html", credits = 1000)
 
 
 @app.route("/tracker")
