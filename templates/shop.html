@@ -31,13 +31,21 @@
           {{ tier }}
         </div>
 
-        <div class="avatar-wrap">
+        <!-- Option 1: No inner square border. Just a clean stage + spotlight (CSS does the work) -->
+        <div class="avatar-wrap avatar-wrap--spotlight">
           <img id="main-avatar"
                src="{{ url_for('static', filename='avatar/default.jpg') }}"
                data-base-src="{{ url_for('static', filename='avatar/default.jpg') }}"
-               class="avatar-img"
-               alt="Your Avatar">
+               class="avatar-img avatar-img--hero"
+               alt="Your Avatar"
+               loading="eager"
+               decoding="async">
           <div class="avatar-stage" aria-hidden="true"></div>
+        </div>
+
+        <!-- small hint row: makes the card feel more intentional -->
+        <div class="avatar-hint muted">
+          Tap items below to buy, equip, or unequip.
         </div>
 
       </div>
@@ -60,7 +68,7 @@
 
       <div class="shop-tile">
         <div class="tile-inner">
-          <img src="{{ url_for('static', filename=img_path) }}" class="tile-img" alt="{{ name }}">
+          <img src="{{ url_for('static', filename=img_path) }}" class="tile-img" alt="{{ name }}" loading="lazy">
           <div class="tile-name">{{ name }}</div>
           <div class="tile-desc">{{ desc }}</div>
         </div>
@@ -85,6 +93,9 @@
 
   </div>
 </div>
+
+{% endblock %}
+
 {% block scripts %}
 <script>
   // ===== State =====
@@ -108,14 +119,13 @@
   }
 
   // ===== Avatar preview helper =====
-  // Since you only have ONE image element, we can only display ONE equipped image.
-  // We'll show the most recently equipped item. Buttons still support multi-equip.
+  // Still a single image. We'll preview the most recently equipped item.
   function syncAvatarPreview(preferUrl) {
     if (preferUrl && equippedItems.has(preferUrl)) {
       mainAvatar.src = preferUrl;
       return;
     }
-    const any = equippedItems.values().next().value; // first equipped
+    const any = equippedItems.values().next().value;
     mainAvatar.src = any ? any : baseAvatarUrl;
   }
 
@@ -156,8 +166,8 @@
         creditsDisplay.innerText = currentCredits;
 
         ownedItems.add(itemUrl);
-        equippedItems.add(itemUrl);     // <-- key change
-        syncAvatarPreview(itemUrl);     // show newly equipped
+        equippedItems.add(itemUrl);
+        syncAvatarPreview(itemUrl);
         updateButtons();
         return;
       }
@@ -178,7 +188,6 @@
     });
   });
 
-  // Initial render
   updateButtons();
 </script>
 {% endblock %}
