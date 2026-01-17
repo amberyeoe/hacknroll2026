@@ -253,7 +253,7 @@ body{
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 26px 0 16px;
+  padding: 26px 0 0px;
 }
 
 .avatar-wrap::before{
