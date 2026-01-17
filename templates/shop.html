@@ -4,13 +4,61 @@
 shop
 {% endblock %}
 
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
 {% block content %}
 
-   
-    
-    <h1>welcome to shop</h1>
-    <a href= "{{ url_for('home') }}">home</a>
-   
+<div class="page">
+  <div class="row row-space">
+    <div>
+      <h1 class="h1">Shop</h1>
+      <div class="muted">Spend credits to buy and equip cosmetics.</div>
+    </div>
 
+    <!-- Hardcoded for now -->
+    <div class="pill">Credits: <b>150</b></div>
+  </div>
+
+  <div class="grid">
+    <!-- Item 1 -->
+    <div class="card">
+      <div class="card-title">Headband</div>
+      <div class="muted">+ style</div>
+
+      <div class="row row-space mt">
+        <div class="price">50 credits</div>
+        <button class="btn btn-primary" type="button">Buy</button>
+      </div>
+    </div>
+
+    <!-- Item 2 -->
+    <div class="card">
+      <div class="card-title">Running Shoes</div>
+      <div class="muted">drip</div>
+
+      <div class="row row-space mt">
+        <div class="price">120 credits</div>
+        <button class="btn btn-primary" type="button">Buy</button>
+      </div>
+    </div>
+
+    <!-- Item 3 (example already owned) -->
+    <div class="card">
+      <div class="card-title">Gold Badge</div>
+      <div class="muted">flex</div>
+
+      <div class="row row-space mt">
+        <div class="price">200 credits</div>
+        <span class="tag">Equipped</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt">
+    <a class="btn btn-ghost" href="/home">Back</a>
+  </div>
+</div>
 
 {% endblock %}
