@@ -1,10 +1,33 @@
 from flask import Flask, render_template, request, url_for, redirect, g
 import sqlite3
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user                      
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+app.secret_key = "dev-secret-key"
 
 DATABASE = "database.db"
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+class User(UserMixin):
+    def __init__(self, id, username):
+        self.id = id
+        self.username = username
+
+@login_manager.user_loader
+def load_user(user_id):
+    db = get_db()
+    user = db.execute(
+        "SELECT * FROM users WHERE id = ?",
+        (user_id,)
+    ).fetchone()
+
+    if user:
+        return User(user["id"], user["username"])
+    return None
 
 def get_db():
     db = getattr(g, "_database", None)
@@ -54,8 +77,25 @@ def base():
 def home():
     return render_template("home.html")
 
-@app.route("/register")
+@app.route("/register", methods=["GET", "POST"])
 def register():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        hashed_pw = generate_password_hash(password)
+
+        db = get_db()
+        try:
+            db.execute(
+                "INSERT INTO users (username, password) VALUES (?, ?)",
+                (username, hashed_pw)
+            )
+            db.commit()
+            return redirect(url_for("login"))
+        except sqlite3.IntegrityError:
+            return "Username already exists"
+
     return render_template("register.html")
 
 @app.route("/login", methods=["GET", "POST"])
@@ -64,9 +104,18 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
         # Here you would normally verify the username and password
-        user = User(username)
-        login_user(user)
-        return redirect(url_for("base"))
+        db = get_db()
+        user = db.execute(
+            "SELECT * FROM users WHERE username = ?",
+            (username,)
+        ).fetchone()
+
+        if user and check_password_hash(user["password"], password):
+            login_user(User(user["id"], user["username"]))
+            return redirect(url_for("home"))
+
+        return "Invalid username or password"
+
     return render_template("login.html")
 
 
@@ -75,15 +124,8 @@ def shop():
     return render_template("shop.html")
 
 
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    if request.method == "POST":
-        # Handle user registration logic here
-        return redirect(url_for("login"))
-    return render_template("signup.html")
-
-
 @app.route("/tracker")
+@login_required
 def tracker():
     return render_template("tracker.html")
 
@@ -93,4 +135,6 @@ def workout():
     return render_template("workout.html")
 
 if __name__ == "__main__":
+    with app.app_context():
+        create_tables()
     app.run(debug=True)
