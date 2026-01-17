@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect, g
+from flask import Flask, render_template, request, url_for, redirect, g, request, jsonify
 import sqlite3
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user      
 from werkzeug.security import generate_password_hash, check_password_hash  
@@ -244,6 +244,40 @@ def shop():
     credits = row["credits"] if row else 0
     return render_template("shop.html", credits=credits)
 
+@app.route("/purchase_items", methods=["POST"]) #888
+@login_required
+def purchase_items():
+    data = request.get_json()
+    avatar_path = data.get("avatar_path")
+    price = int(data.get("price", 0))
+
+    db = get_db()
+
+    # Get current credits
+    row = db.execute(
+        "SELECT credits FROM profiles WHERE user_id = ?",
+        (current_user.id,)
+    ).fetchone()
+
+    if not row or row["credits"] < price:
+        return jsonify({"success": False, "message": "Insufficient Credits"}), 400
+
+    # Deduct credits
+    new_credits = row["credits"] - price
+    db.execute(
+        "UPDATE profiles SET credits = ? WHERE user_id = ?",
+        (new_credits, current_user.id)
+    )
+
+    # Update avatar_path (or mark as owned)
+    db.execute(
+        "UPDATE profiles SET avatar_path = ? WHERE user_id = ?",
+        (avatar_path, current_user.id)
+    )
+
+    db.commit()
+
+    return jsonify({"success": True, "credits": new_credits})
 
 @app.route("/tracker")
 @login_required
