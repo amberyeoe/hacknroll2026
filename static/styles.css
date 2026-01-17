@@ -101,7 +101,7 @@ body {
 .avatar--untrained { outline: 3px solid rgba(255, 106, 106, 0.28); }
 
 /* =========================
-   Shop grid
+   Shop grid (compact)
 ========================= */
 .section-title {
   margin-top: 16px;
@@ -155,7 +155,7 @@ body {
 }
 
 .item-bottom {
-  margin-top: 10px;
+  margin-top: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
