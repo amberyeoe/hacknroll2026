@@ -149,6 +149,11 @@ def workout():
 def leaderboard():
     return render_template("leaderboard.html")
 
+@app.route("/profile")
+@login_required
+def profile():
+    return render_template("profile.html")
+
 
 if __name__ == "__main__":
     with app.app_context():
