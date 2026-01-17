@@ -59,7 +59,7 @@
 
           <div class="xp-meta">
             <span class="xp-level">LVL {{ level | default(1) }}</span>
-            <span class="xp-total">{{ xp | default(260) }} XP</span>
+            <span class="xp-total">{{ xp | default(0) }} XP</span>
           </div>
         </div>
 
@@ -69,7 +69,7 @@
         </div>
 
         <div class="xp-sub">
-          {{ xp_progress | default(52) }}/{{ xp_need | default(100) }} to next level
+          {{ xp_progress | default(0) }}/{{ xp_need | default(100) }} to next level
         </div>
       </div>
 
