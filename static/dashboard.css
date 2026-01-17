@@ -87,6 +87,67 @@
 
 .spacer{ height: 34px; }
 
+/* =========================
+   XP + Level block
+========================= */
+.xp-block{
+  margin-top: 22px;
+  max-width: 520px;
+}
+
+.xp-top{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.xp-meta{
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.xp-level{
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #e5e7eb;
+}
+
+.xp-total{
+  font-size: 18px;
+  font-weight: 700;
+  color: #f5f5f5;
+  opacity: 0.95;
+}
+
+.xp-bar{
+  margin-top: 10px;
+  height: 18px;
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 999px;
+  background: rgba(0,0,0,0.35);
+  overflow: hidden;
+}
+
+.xp-fill{
+  height: 100%;
+  width: 0%;
+  background: rgba(255,255,255,0.92);
+  border-radius: 999px;
+
+  /* makes the bar "fill slowly" */
+  transition: width 0.9s ease;
+}
+
+.xp-sub{
+  margin-top: 8px;
+  font-size: 12px;
+  color: #bdbdbd;
+  letter-spacing: 0.06em;
+}
+
 /* Right side avatar */
 .dash-right{
   width: 40%;
@@ -99,7 +160,7 @@
   border-radius: 18px;
   position: relative;
   overflow: hidden;
-  background: rgba(0,0,0,0.35); /* a little transparent so bg shows */
+  background: rgba(0,0,0,0.35); /* let bg show through */
   backdrop-filter: blur(2px);
 }
 
