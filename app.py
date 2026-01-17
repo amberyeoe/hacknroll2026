@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, url_for, redirect, g
 import sqlite3
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user      
 from werkzeug.security import generate_password_hash, check_password_hash  
-from datetime import datetime              
+from datetime import datetime       
+import requests       
 
 app = Flask(__name__)
 app.secret_key = "dev-secret-key"
@@ -169,7 +170,7 @@ def logout():
 @app.route("/shop")
 @login_required
 def shop():
-    return render_template("shop.html")
+    return render_template("shop.html", credits=1000)
 
 
 @app.route("/tracker")
@@ -177,14 +178,46 @@ def shop():
 def tracker():
     db = get_db()
     results = db.execute("SELECT date_submitted, score FROM workout_tracking ORDER BY date_submitted").fetchall()
-    dates = [row[0].strftime("%Y-%m-%d") for row in results]
+    dates = [row[0] for row in results]
     scores = [row[1] for row in results]
     return render_template("tracker.html", dates=dates, scores=scores)
 
 
-@app.route("/workout")
+@app.route("/workout", methods=["GET", "POST"])
 @login_required
 def workout():
+    db = get_db()
+    if request.method == "POST":
+        pushup = int(request.form["pushup"])
+        situp = int(request.form["situp"])
+        run = float(request.form["run"])
+        dob_row = db.execute(
+            "SELECT dob FROM profiles WHERE user_id = ?", (current_user.id,)
+        ).fetchone()
+
+
+        response = requests.get(
+            f"https://ippt.vercel.app/api?age={age}&situps={situp}&pushups={pushup}&run={run}"
+        )
+
+        if response.status_code == 200:
+            data = response.json()
+            score = data.get("points")  # the API returns total points
+            grade = data.get("grade")   # Gold/Silver/Pass/Fail
+        else:
+            return f"Error fetching IPPT score: {response.status_code}"
+
+        db.execute(
+            """
+            INSERT INTO workout_tracking (user_id, pushup, situp, run, score, date_submitted)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (current_user.id, pushup, situp, run, score, "2025-10-17") #to replace with below
+            #(current_user.id, pushup, situp, run, score, datetime.now())
+        )
+        db.commit()
+          # or redirect somewhere
+
     return render_template("workout.html")
 
 @app.route("/onboarding", methods=["GET", "POST"])
