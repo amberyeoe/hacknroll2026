@@ -64,7 +64,7 @@ def create_tables():
             points INTEGER DEFAULT 0,
             dob DATE,
             goal TEXT,
-            next_ippt DATE,
+            next_ippt_date DATE,
             prev_ippt_score INTEGER,
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
@@ -125,7 +125,14 @@ def register():
                 (username, hashed_pw)
             )
             db.commit()
-            return redirect(url_for("login"))
+            db = get_db()
+            user = db.execute(
+                "SELECT * FROM users WHERE username = ?",
+                (username,)
+            ).fetchone()
+
+            login_user(User(user["id"], user["username"]))
+            return redirect(url_for("onboarding"))
         except sqlite3.IntegrityError:
             return "Username already exists"
 
@@ -174,9 +181,39 @@ def tracker():
 def workout():
     return render_template("workout.html")
 
-@app.route("/onboarding")
+@app.route("/onboarding", methods=["GET", "POST"])
 @login_required
 def onboarding():
+    if request.method == "POST":
+        dob = request.form["birthdate"]
+        next_ippt_date = request.form["next_ippt"]
+        prev_ippt_score = request.form["prev_ippt_score"]
+        goal = request.form["goal"]  # <-- matches the updated HTML name
+
+        db = get_db()
+        try:
+            db.execute(
+                """
+                INSERT INTO profiles (user_id, dob, next_ippt_date, prev_ippt_score, goal)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (current_user.id, dob, next_ippt_date, prev_ippt_score, goal)
+            )
+            db.commit()
+            return redirect(url_for("home"))
+        except sqlite3.IntegrityError:
+            # If the profile already exists, you could update it instead
+            db.execute(
+                """
+                UPDATE profiles
+                SET dob = ?, next_ippt_date = ?, prev_ippt_score = ?, goal = ?
+                WHERE user_id = ?
+                """,
+                (dob, next_ippt_date, prev_ippt_score, goal, current_user.id)
+            )
+            db.commit()
+            return redirect(url_for("home"))
+
     return render_template("onboarding.html")
 
 @app.route("/leaderboard")
