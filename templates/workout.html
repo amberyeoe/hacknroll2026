@@ -6,11 +6,29 @@ workout
 
 {% block content %}
 
-   
-    
-    <h1>welcome to workout</h1>
-    <a href= "{{ url_for('home') }}">home</a>
-   
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
+    <h3 class="text-center mb-4">Submit Workout</h3>
 
+    <form method="POST" action="">
+      <div class="mb-3">
+        <label for="pushup" class="form-label">Push-ups</label>
+        <input type="number" name="pushup" id="pushup" class="form-control" min="0" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="situp" class="form-label">Sit-ups</label>
+        <input type="number" name="situp" id="situp" class="form-control" min="0" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="run" class="form-label">2.4 km Run (minutes)</label>
+        <input type="number" name="run" id="run" class="form-control" step="0.01" min="0" placeholder="e.g., 6.7" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Submit</button>
+    </form>
+  </div>
+</div>
 
 {% endblock %}
