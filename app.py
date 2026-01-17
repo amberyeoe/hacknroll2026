@@ -295,14 +295,30 @@ def workout():
             (current_user.id, pushup, situp, run, score, today_str)
         )
 
+        profile = db.execute(
+        "SELECT xp FROM profiles WHERE user_id = ?",
+        (current_user.id,)
+        ).fetchone()
+
+        old_xp = profile["xp"]
+        old_level = (old_xp // 100) + 1
+
+        # 2️⃣ Calculate new XP & level
+        new_xp = old_xp + score
+        new_level = (new_xp // 100) + 1
+
+        # 3️⃣ Calculate credits earned
+        levels_gained = new_level - old_level
+        credits_earned = max(0, levels_gained * 5)
+
+        # 4️⃣ Update profile
         db.execute(
             """
-            UPDATE profiles 
-            SET xp = xp + ?
+            UPDATE profiles
+            SET xp = ?, credits = credits + ?
             WHERE user_id = ?
             """,
-            # (current_user.id, pushup, situp, run, score, "2025-10-17") #to replace with below
-            (score, current_user.id)
+            (new_xp, credits_earned, current_user.id)
         )
 
 
