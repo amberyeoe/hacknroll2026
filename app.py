@@ -220,6 +220,44 @@ def workout():
 
     return render_template("workout.html")
 
+@app.route("/setworkout", methods=["GET", "POST"])
+@login_required
+def setworkout():
+    db = get_db()
+    if request.method == "POST":
+        pushup = int(request.form["pushup"])
+        situp = int(request.form["situp"])
+        run = float(request.form["run"])
+        dob_row = db.execute(
+            "SELECT dob FROM profiles WHERE user_id = ?", (current_user.id,)
+        ).fetchone()
+
+
+        response = requests.get(
+            f"https://ippt.vercel.app/api?age={age}&situps={situp}&pushups={pushup}&run={run}"
+        )
+        print(response)
+
+        if response.status_code == 200:
+            data = response.json()
+            score = data.get("points")  # the API returns total points
+            grade = data.get("grade")   # Gold/Silver/Pass/Fail
+        else:
+            return f"Error fetching IPPT score: {response.status_code}"
+
+        # db.execute(
+        #     """
+        #     INSERT INTO workout_tracking (user_id, pushup, situp, run, score, date_submitted)
+        #     VALUES (?, ?, ?, ?, ?, ?)
+        #     """,
+        #     (current_user.id, pushup, situp, run, score, "2025-10-17") #to replace with below
+        #     #(current_user.id, pushup, situp, run, score, datetime.now())
+        # )
+        # db.commit()
+        #   # or redirect somewhere
+
+    return render_template("setworkout.html")
+
 @app.route("/onboarding", methods=["GET", "POST"])
 @login_required
 def onboarding():
