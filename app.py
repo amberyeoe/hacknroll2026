@@ -176,7 +176,7 @@ def shop():
 @login_required
 def tracker():
     db = get_db()
-    results = db.execute("SELECT test_date, score FROM ippt_results ORDER BY test_date").fetchall()
+    results = db.execute("SELECT date_submitted, score FROM workout_tracking ORDER BY date_submitted").fetchall()
     dates = [row[0].strftime("%Y-%m-%d") for row in results]
     scores = [row[1] for row in results]
     return render_template("tracker.html", dates=dates, scores=scores)
