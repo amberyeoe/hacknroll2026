@@ -19,7 +19,6 @@
   z-index: 0;
 }
 
-/* ===== Page container ===== */
 .workout-page {
   position: relative;
   z-index: 1;
@@ -268,6 +267,93 @@
 
 .save-btn:hover { transform: translateY(-1px); }
 .save-btn:active { transform: translateY(0px); }
+
+/* ===== Fullscreen overlay ===== */
+.no-scroll {
+  overflow: hidden;
+}
+
+.fs-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.86);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+}
+
+.fs-overlay.hidden {
+  display: none;
+}
+
+.fs-card {
+  width: min(720px, 92vw);
+  border-radius: 24px;
+  padding: 28px 22px;
+  background: rgba(0,0,0,0.18);
+  border: 1px solid rgba(255,255,255,0.16);
+  text-align: center;
+  color: #fff;
+  backdrop-filter: blur(6px);
+}
+
+.fs-title {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  opacity: 0.9;
+}
+
+.fs-number {
+  margin-top: 16px;
+  font-weight: 1000;
+  letter-spacing: 2px;
+  font-size: clamp(72px, 14vw, 140px);
+  line-height: 1.05;
+}
+
+.fs-sub {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  opacity: 0.85;
+}
+
+.fs-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.fs-btn {
+  border-radius: 16px;
+  padding: 12px 16px;
+  font-weight: 950;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  min-width: 140px;
+}
+
+.fs-btn.primary {
+  background: #fff;
+  color: #111;
+  border-color: #fff;
+}
+
+.fs-btn.ghost:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+.fs-btn.hidden {
+  display: none;
+}
 
 /* ===== Mobile ===== */
 @media (max-width: 560px) {
