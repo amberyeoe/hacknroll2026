@@ -1,38 +1,51 @@
 /* =========================
-   Theme + Base
+   Full styles.css (Option B: Shop vibes)
+   Replace your entire static/css/styles.css with this
 ========================= */
+
 * { box-sizing: border-box; }
 
 :root{
-  --bg1: #f7f8ff;
-  --bg2: #f2fbff;
-  --card: rgba(255,255,255,0.78);
-  --border: rgba(0,0,0,0.08);
+  --card: rgba(255,255,255,0.80);
+  --border: rgba(0,0,0,0.09);
   --text: #0f172a;
   --muted: rgba(15,23,42,0.68);
   --shadow: 0 10px 30px rgba(2,6,23,0.08);
   --shadow2: 0 6px 18px rgba(2,6,23,0.06);
 }
 
+/* =========================
+   Background (Shop vibe)
+========================= */
 body{
   margin: 0;
   font-family: Arial, sans-serif;
   color: var(--text);
-  background:
-    radial-gradient(900px 500px at 10% 10%, rgba(47,111,255,0.16), transparent 60%),
-    radial-gradient(900px 500px at 90% 30%, rgba(0,212,255,0.14), transparent 55%),
-    linear-gradient(180deg, var(--bg1), var(--bg2));
   min-height: 100vh;
+
+  /* Premium shop gradient + faint texture lines */
+  background:
+    radial-gradient(900px 500px at 20% 15%, rgba(255,190,60,0.16), transparent 60%),
+    radial-gradient(900px 500px at 85% 20%, rgba(59,130,246,0.14), transparent 55%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(15,23,42,0.03) 0px,
+      rgba(15,23,42,0.03) 1px,
+      rgba(15,23,42,0.00) 1px,
+      rgba(15,23,42,0.00) 12px
+    ),
+    linear-gradient(180deg, #fffdf8, #f5f9ff);
 }
 
-/* Page container */
+/* =========================
+   Layout + Typography
+========================= */
 .page{
   padding: 16px;
   max-width: 980px;
   margin: 0 auto;
 }
 
-/* Typography */
 .h1{
   margin: 0 0 4px 0;
   font-size: 40px;
@@ -65,7 +78,7 @@ body{
   padding: 8px 12px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.75);
   font-size: 13px;
   white-space: nowrap;
   box-shadow: var(--shadow2);
@@ -100,17 +113,17 @@ body{
   padding: 6px 10px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.88);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 900;
   box-shadow: 0 4px 12px rgba(2,6,23,0.05);
 }
 
 /* Tier badge variants */
-.tier-badge--gold{ border-color: rgba(215,176,74,0.75); }
-.tier-badge--silver{ border-color: rgba(154,160,170,0.75); }
-.tier-badge--pass{ border-color: rgba(75,134,255,0.75); }
-.tier-badge--untrained{ border-color: rgba(255,106,106,0.75); }
+.tier-badge--gold{ border-color: rgba(215,176,74,0.80); }
+.tier-badge--silver{ border-color: rgba(154,160,170,0.80); }
+.tier-badge--pass{ border-color: rgba(75,134,255,0.80); }
+.tier-badge--untrained{ border-color: rgba(255,106,106,0.80); }
 
 /* Bigger avatar */
 .avatar{
@@ -133,7 +146,7 @@ body{
 ========================= */
 .section-title{
   margin-top: 16px;
-  font-weight: 800;
+  font-weight: 900;
   font-size: 14px;
   opacity: 0.95;
 }
@@ -165,7 +178,7 @@ body{
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.55));
+  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.55));
   border: 1px solid var(--border);
   box-shadow: 0 6px 14px rgba(2,6,23,0.06);
   flex: 0 0 auto;
@@ -209,7 +222,7 @@ body{
   justify-content: center;
   border-radius: 12px;
   border: 1px solid rgba(0,0,0,0.10);
-  background: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.88);
   cursor: pointer;
   font-weight: 900;
   text-decoration: none;
@@ -224,7 +237,7 @@ body{
 
 .btn-primary{
   background: linear-gradient(180deg, #3b82f6, #2563eb);
-  border-color: rgba(37,99,235,0.9);
+  border-color: rgba(37,99,235,0.92);
   color: #fff;
   box-shadow: 0 8px 18px rgba(37,99,235,0.22);
 }
@@ -235,10 +248,12 @@ body{
 }
 
 .btn-ghost{
-  background: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.88);
 }
 
-/* Mobile tweaks */
+/* =========================
+   Mobile tweaks
+========================= */
 @media (max-width: 420px){
   .h1{ font-size: 34px; }
   .avatar{ width: 140px; height: 140px; }
