@@ -31,12 +31,17 @@
           {{ tier }}
         </div>
 
+        <!-- Avatar stack (base + overlays) -->
         <div class="avatar-wrap">
-          <img id="main-avatar"
-               src="{{ url_for('static', filename='avatar/default.jpg') }}"
-               data-base-src="{{ url_for('static', filename='avatar/default.jpg') }}"
-               class="avatar-img"
-               alt="Your Avatar">
+          <div id="avatar-stack" class="avatar-stack">
+            <img id="base-avatar"
+                 src="{{ url_for('static', filename='avatar/default.jpg') }}"
+                 class="avatar-img avatar-base"
+                 alt="Your Avatar">
+
+            <!-- Overlays inserted by JS here -->
+          </div>
+
           <div class="avatar-stage" aria-hidden="true"></div>
         </div>
 
@@ -49,13 +54,14 @@
 
     <div class="shop-grid shop-grid--game">
 
-      {% for name, desc, img_path, price, avatar_path in [
-        ("Headband", "Keeps sweat off", "items/headband.png", 50, "avatar/headband.png"),
-        ("Headphones", "Workout soundtrack", "items/headphones.png", 180, "avatar/headphone.png"),
-        ("Wristband", "Grip & comfort", "items/wristband.png", 60, "avatar/wristband.png"),
-        ("Sports Watch", "Track your runs", "items/watch.png", 220, "avatar/watch.png"),
-        ("Nike T-Shirt", "Classic training fit", "items/nikeshirt.png", 140, "avatar/nikeshirt.png"),
-        ("Nike Singlet", "Light & breathable", "items/nikesinglet.png", 130, "avatar/nikesinglet.png")
+      {# data-layer controls overlay draw order (bigger = on top) #}
+      {% for name, desc, img_path, price, overlay_path, layer in [
+        ("Headband", "Keeps sweat off", "items/headband.png", 50, "avatar_overlays/headband.png", 30),
+        ("Headphones", "Workout soundtrack", "items/headphones.png", 180, "avatar_overlays/headphones.png", 30),
+        ("Wristband", "Grip & comfort", "items/wristband.png", 60, "avatar_overlays/wristband.png", 20),
+        ("Sports Watch", "Track your runs", "items/watch.png", 220, "avatar_overlays/watch.png", 20),
+        ("Nike T-Shirt", "Classic training fit", "items/nikeshirt.png", 140, "avatar_overlays/nike_tshirt.png", 10),
+        ("Nike Singlet", "Light & breathable", "items/nikesinglet.png", 130, "avatar_overlays/nike_singlet.png", 10)
       ] %}
 
       <div class="shop-tile">
@@ -69,7 +75,8 @@
           <div class="tile-price">🪙 {{ price }}</div>
           <button class="buy-btn" type="button"
                   data-price="{{ price }}"
-                  data-new-avatar="{{ url_for('static', filename=avatar_path) }}">
+                  data-overlay="{{ url_for('static', filename=overlay_path) }}"
+                  data-layer="{{ layer }}">
             BUY
           </button>
         </div>
@@ -85,84 +92,109 @@
 
   </div>
 </div>
-
+{% block scripts %}
 <script>
-  // 1. Initialize State
+  // ===== STATE =====
   let currentCredits = parseInt(document.getElementById('user-credits').innerText || "0", 10);
-  let ownedItems = new Set();
-  let currentEquippedUrl = null;
 
-  // DOM Elements
+  const ownedItems = new Set();      // overlays bought
+  const equippedItems = new Set();   // overlays currently worn (MULTIPLE)
+
+  // ===== DOM =====
   const creditsDisplay = document.getElementById('user-credits');
-  const mainAvatar = document.getElementById('main-avatar');
-  const baseAvatarUrl = mainAvatar.dataset.baseSrc;
+  const avatarStack = document.getElementById('avatar-stack');
   const toast = document.getElementById('error-toast');
 
-  // 2. Helper: Show Error Toast
+  // overlayUrl -> <img>
+  const overlayEls = new Map();
+
   function showToast(message) {
     toast.innerText = message;
     toast.classList.add("show");
     setTimeout(() => toast.classList.remove("show"), 3000);
   }
 
-  // 3. Helper: Update Button Visuals
+  function ensureOverlayEl(overlayUrl, layer) {
+    if (overlayEls.has(overlayUrl)) return overlayEls.get(overlayUrl);
+
+    const img = document.createElement('img');
+    img.src = overlayUrl;
+    img.alt = "Overlay";
+    img.className = "avatar-img avatar-overlay is-hidden";
+    img.dataset.overlay = overlayUrl;
+    img.style.zIndex = String(layer || 2); // control stacking
+
+    avatarStack.appendChild(img);
+    overlayEls.set(overlayUrl, img);
+    return img;
+  }
+
+  function setEquipped(overlayUrl, layer, shouldEquip) {
+    const el = ensureOverlayEl(overlayUrl, layer);
+
+    if (shouldEquip) {
+      equippedItems.add(overlayUrl);
+      el.classList.remove('is-hidden');
+    } else {
+      equippedItems.delete(overlayUrl);
+      el.classList.add('is-hidden');
+    }
+  }
+
   function updateButtons() {
     document.querySelectorAll('.buy-btn').forEach(btn => {
-      const itemUrl = btn.getAttribute('data-new-avatar');
+      const overlayUrl = btn.getAttribute('data-overlay');
 
-      if (!ownedItems.has(itemUrl)) {
+      if (!ownedItems.has(overlayUrl)) {
         btn.innerText = "BUY";
         btn.classList.remove('owned', 'equipped');
+      } else if (equippedItems.has(overlayUrl)) {
+        btn.innerText = "UNEQUIP";
+        btn.classList.add('equipped');
+        btn.classList.remove('owned');
       } else {
-        if (currentEquippedUrl === itemUrl) {
-          btn.innerText = "UNEQUIP";
-          btn.classList.add('equipped');
-          btn.classList.remove('owned');
-        } else {
-          btn.innerText = "EQUIP";
-          btn.classList.add('owned');
-          btn.classList.remove('equipped');
-        }
+        btn.innerText = "EQUIP";
+        btn.classList.add('owned');
+        btn.classList.remove('equipped');
       }
     });
   }
 
-  // 4. Main Click Handler
+  // ===== Click handler =====
   document.querySelectorAll('.buy-btn').forEach(button => {
     button.addEventListener('click', function() {
-      const itemUrl = this.getAttribute('data-new-avatar');
+      const overlayUrl = this.getAttribute('data-overlay');
+      const layer = parseInt(this.getAttribute('data-layer') || "2", 10);
       const price = parseInt(this.getAttribute('data-price') || "0", 10);
 
-      console.log("Attempting to switch avatar to:", itemUrl);
-
-      // A) Buy New Item
-      if (!ownedItems.has(itemUrl)) {
-        if (currentCredits >= price) {
-          currentCredits -= price;
-          creditsDisplay.innerText = currentCredits;
-
-          ownedItems.add(itemUrl);
-          currentEquippedUrl = itemUrl;
-          mainAvatar.src = itemUrl;
-
-          updateButtons();
-        } else {
+      // Buy (auto-equip)
+      if (!ownedItems.has(overlayUrl)) {
+        if (currentCredits < price) {
           showToast("Insufficient Credits!");
+          return;
         }
-      }
-      // B) Equip/Unequip
-      else {
-        if (currentEquippedUrl === itemUrl) {
-          currentEquippedUrl = null;
-          mainAvatar.src = baseAvatarUrl;
-        } else {
-          currentEquippedUrl = itemUrl;
-          mainAvatar.src = itemUrl;
-        }
+        currentCredits -= price;
+        creditsDisplay.innerText = currentCredits;
+
+        ownedItems.add(overlayUrl);
+        setEquipped(overlayUrl, layer, true);
         updateButtons();
+        return;
       }
+
+      // Toggle equip/unequip
+      if (equippedItems.has(overlayUrl)) {
+        setEquipped(overlayUrl, layer, false);
+      } else {
+        setEquipped(overlayUrl, layer, true);
+      }
+
+      updateButtons();
     });
   });
-</script>
 
+  // Initial render
+  updateButtons();
+</script>
+{% endblock %}
 {% endblock %}
