@@ -36,14 +36,13 @@
   margin: 8px 0 14px;
 }
 
-/* ---- Banner behind the title (cropped/zoomed) ---- */
+/* ---- Banner behind the title (LESS TALL, SAME WIDTH) ---- */
 .title-banner{
   position: relative;
   flex: 0 0 auto;
 
-  /* Controls ribbon size */
-  width: 420px;
-  height: 92px;
+  width: 420px;   /* same width */
+  height: 70px;   /* less tall */
 
   display: flex;
   align-items: center;
@@ -57,8 +56,12 @@
   z-index: 0;
   pointer-events: none;
 
-  /* your banner location: static/ui/Bluebanner.png */
-  background: url("ui/Bluebanner.png") center / cover no-repeat;
+  background-image: url("ui/Bluebanner.png");
+  background-repeat: no-repeat;
+
+  /* zoom in to crop translucent edges */
+  background-size: 150% 150%;
+  background-position: center 55%;
 
   filter: drop-shadow(0 10px 18px rgba(0,0,0,0.18));
 }
@@ -69,7 +72,7 @@
 
   margin: 0;
   color: #fff;
-  font-size: 34px;
+  font-size: 28px;
   font-weight: 950;
   letter-spacing: 0.5px;
   text-shadow: 0 2px 0 rgba(0,0,0,0.18);
@@ -465,10 +468,10 @@
   /* Banner scaling on small screens */
   .title-banner{
     width: 300px;
-    height: 72px;
+    height: 58px;
   }
 
   .page-title{
-    font-size: 24px;
+    font-size: 22px;
   }
 }
