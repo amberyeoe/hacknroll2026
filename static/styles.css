@@ -140,39 +140,22 @@ body{
   place-items: center;
 }
 
-/* make the whole banner slightly shorter (less long on sides) */
 .shop-banner__img{
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%) scaleX(0.92) scaleY(1.85);
+  transform: translate(-50%, -50%) scaleX(1.08) scaleY(1.85);
+  /* ^ THIS is the key: scaleY makes the red banner taller to cover subtitle */
+
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: fill;              /* stretch to actually fill height */
   z-index: 2;
+
   pointer-events: none;
   user-select: none;
   filter: drop-shadow(0 14px 22px rgba(0,0,0,0.25));
 }
-
-/* add a subtle "bottom extension" behind the subtitle only */
-.shop-banner::after{
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 62%;                 /* sits around subtitle area */
-  transform: translateX(-50%);
-  width: min(520px, 86%);   /* <-- increase this if you want wider */
-  height: 34px;
-  border-radius: 999px;
-
-  /* red base glow */
-  background: rgba(140, 0, 0, 0.35);
-  filter: blur(0.2px);
-  z-index: 2;               /* behind text, above background */
-  pointer-events: none;
-}
-
 
 .shop-banner__content{
   position: relative;
