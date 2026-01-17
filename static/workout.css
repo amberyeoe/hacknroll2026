@@ -1,0 +1,204 @@
+/* ===== Background ===== */
+.workout-bg {
+  min-height: 100vh;
+  background-image: url("home_backgrnd/Track.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  padding: 22px 0;
+  position: relative;
+}
+
+/* White overlay so the UI stays readable */
+.workout-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(2px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===== Page container ===== */
+.workout-page {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 18px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0 14px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.home-link {
+  text-decoration: none;
+  color: #111;
+  font-weight: 800;
+}
+
+/* ===== Form layout ===== */
+.workout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.card {
+  border: 1px solid #e6e6e6;
+  border-radius: 18px;
+  padding: 22px;
+  background: rgba(255, 255, 255, 0.93);
+}
+
+.card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+}
+
+.left {
+  flex: 1;
+  min-width: 260px;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 170px;
+}
+
+/* ===== Buttons ===== */
+.action-btn {
+  width: 100%;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  padding: 16px 16px;
+  border-radius: 16px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+}
+
+.action-btn.secondary {
+  background: #fff;
+  color: #111;
+}
+
+.hint {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+/* ===== Big inputs (PU/SU) ===== */
+.big-input {
+  width: 140px;
+  height: 86px;
+  padding: 8px 14px;
+  border-radius: 16px;
+  border: 1px solid #e6e6e6;
+  background: #fff;
+  outline: none;
+
+  text-align: center;
+  font-size: 52px;
+  font-weight: 900;
+  color: #777;
+}
+
+.big-input:focus {
+  border-color: #111;
+  color: #111;
+}
+
+.big-label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+/* ===== Run time (mm:ss) ===== */
+.time-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.time-box {
+  width: 100px;
+  height: 86px;
+  padding: 8px 14px;
+  border-radius: 16px;
+  border: 1px solid #e6e6e6;
+  background: #fff;
+  outline: none;
+
+  text-align: center;
+  font-size: 52px;
+  font-weight: 900;
+  color: #777;
+}
+
+.time-box:focus {
+  border-color: #111;
+  color: #111;
+}
+
+.time-sep {
+  font-size: 52px;
+  font-weight: 900;
+  color: #111;
+  line-height: 1;
+}
+
+/* ===== Save ===== */
+.save-row {
+  margin-top: 4px;
+}
+
+.save-btn {
+  width: 100%;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  padding: 18px 16px;
+  border-radius: 18px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+}
+
+/* ===== Mobile ===== */
+@media (max-width: 560px) {
+  .card-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .right {
+    align-items: flex-end;
+    min-width: unset;
+  }
+
+  .big-input,
+  .time-box {
+    width: 140px;
+  }
+}

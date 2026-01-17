@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}Home{% endblock %}
+
 {% block css %}
 
 <link rel="stylesheet" href="../static/dashboard.css">{% endblock %}
@@ -51,11 +52,27 @@
         <div class="info-value">{{ credits | default(300) }}</div>
       </div>
 
-      <!-- XP (number only, no level/fraction) -->
-      <div class="info-row">
-        <div class="info-label">XP:</div>
-        <div class="info-value">{{ xp | default(260) }}</div>
+      <!-- XP + LEVEL + BAR -->
+      <div class="xp-block">
+        <div class="xp-top">
+          <div class="info-label">XP:</div>
+
+          <div class="xp-meta">
+            <span class="xp-level">LVL {{ level | default(1) }}</span>
+            <span class="xp-total">{{ xp | default(260) }} XP</span>
+          </div>
+        </div>
+
+        <div class="xp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+             aria-valuenow="{{ xp_percent | default(52) }}">
+          <div class="xp-fill" style="width: {{ xp_percent | default(52) }}%;"></div>
+        </div>
+
+        <div class="xp-sub">
+          {{ xp_progress | default(52) }}/{{ xp_need | default(100) }} to next level
+        </div>
       </div>
+
     </section>
 
     <!-- RIGHT -->
