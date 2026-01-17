@@ -5,8 +5,56 @@
 {% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 <style>
-  /* --- INTERNAL STYLES FOR SHOP INTERACTIVITY --- */
+  /* --- SHOP SPECIFIC STYLES --- */
+
+  /* 1. LAYOUT & ALIGNMENT */
+  .topbar {
+    position: relative;     /* Anchor for the absolute button */
+    text-align: center;     /* Centers the Title */
+    margin-bottom: 30px;
+    padding-top: 10px;
+  }
+
+  /* 2. CREDITS BUTTON (Yellow Dashboard Style) */
+  .credits-pill {
+    background-color: #FCD34D;
+    color: #000;
+    font-size: 18px;
+    font-weight: 800;
+    border: 3px solid #000;
+    border-radius: 50px;
+    padding: 8px 24px;
+    box-shadow: 2px 4px 0px rgba(0,0,0,0.2);
+    
+    /* Position strictly to the right */
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  /* 3. AVATAR CARD */
+  .avatar-card {
+    padding: 20px;
+    text-align: center;
+    background: white;
+    border-radius: 12px;
+    /* Added min-height to prevent jumping if image loads slowly */
+    min-height: 300px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .avatar-img {
+    width: 260px;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    transition: 0.3s ease;
+  }
   
+  /* 4. SHOP TILES */
   .tile-img {
     width: 64px;
     height: 64px;
@@ -18,22 +66,22 @@
     margin-right: auto;
   }
 
-  /* Different colors for button states */
+  /* 5. BUTTON STATES */
   .buy-btn.owned {
-    background-color: #4CAF50; /* Green for Equip */
+    background-color: #4CAF50;
     color: white;
   }
   
   .buy-btn.equipped {
-    background-color: #666; /* Gray for Unequip */
+    background-color: #666;
     color: white;
   }
 
-  /* Error Toast (Popup) */
+  /* 6. ERROR TOAST */
   .toast {
     visibility: hidden;
     min-width: 250px;
-    background-color: #ff3b30; /* Red error color */
+    background-color: #ff3b30;
     color: #fff;
     text-align: center;
     border-radius: 8px;
@@ -54,25 +102,35 @@
     opacity: 1;
     bottom: 50px;
   }
+  
+  /* Mobile Responsive: Stack title and credits if screen is small */
+  @media (max-width: 600px) {
+    .credits-pill {
+      position: relative;
+      display: inline-block;
+      margin-top: 10px;
+      right: auto;
+      top: auto;
+    }
+  }
 </style>
 {% endblock %}
 
 {% block content %}
 
 <div class="workout-bg">
-
   <div class="page">
 
     <div id="error-toast" class="toast">Insufficient Credits!</div>
 
     <div class="topbar">
-      <div class="topbar-left">
+      <div class="topbar-center">
         <h1 class="h1">Shop</h1>
         <div class="muted">Spend credits to buy and equip cosmetics.</div>
       </div>
 
       <div class="credits-pill">
-        Credits: <b id="user-credits">{{ credits }}</b>
+        Credits: <span id="user-credits">{{ credits }}</span>
       </div>
     </div>
 
@@ -80,19 +138,16 @@
       <div class="avatar-card">
         
         <div class="tier-badge tier-badge--{{ tier|lower }}">
-            {{ tier }}
+          {{ tier }}
         </div>
 
         <img id="main-avatar"
-             src="{{ url_for('static', filename='avatar/default.jpg') }}"
-             data-base-src="{{ url_for('static', filename='avatar/default.jpg') }}"
+             src="static/avatar/default.jpg"
+             data-base-src=static/avatar/default.jpg
              class="avatar-img"
-             style="width:140px; display:block; margin: 0 auto 10px auto;">
+             alt="Your Avatar">
         
-        <div class="muted center">
-          Latest score: <b>{{ latest_score }}</b>
         </div>
-      </div>
     </div>
 
     <div class="shop-header">
@@ -131,7 +186,7 @@
     </div>
 
     <div class="mt">
-        <a class="btn btn-sm btn-ghost" href="/home">Back</a>
+      <a class="btn btn-sm btn-ghost" href="/home">Back</a>
     </div>
 
   </div>
@@ -140,11 +195,7 @@
 <script>
   // 1. Initialize State
   let currentCredits = parseInt(document.getElementById('user-credits').innerText);
-  
-  // Track which items (by image URL) are owned
   let ownedItems = new Set();
-  
-  // Track currently equipped item URL
   let currentEquippedUrl = null;
 
   // DOM Elements
@@ -153,35 +204,27 @@
   const baseAvatarUrl = mainAvatar.getAttribute('data-base-src');
   const toast = document.getElementById('error-toast');
 
-  // 2. Function to show error message
+  // 2. Helper: Show Error Toast
   function showToast(message) {
     toast.innerText = message;
     toast.className = "toast show";
     setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
   }
 
-  // 3. Helper to update button visual state
+  // 3. Helper: Update Button Visuals
   function updateButtons() {
-    const buttons = document.querySelectorAll('.buy-btn');
-    
-    buttons.forEach(btn => {
+    document.querySelectorAll('.buy-btn').forEach(btn => {
       const itemUrl = btn.getAttribute('data-new-avatar');
       
-      // If we don't own it yet
       if (!ownedItems.has(itemUrl)) {
         btn.innerText = "BUY";
         btn.classList.remove('owned', 'equipped');
-      } 
-      // If we own it...
-      else {
-        // ...and it is currently equipped
+      } else {
         if (currentEquippedUrl === itemUrl) {
           btn.innerText = "UNEQUIP";
           btn.classList.add('equipped');
           btn.classList.remove('owned');
-        } 
-        // ...and it is NOT equipped
-        else {
+        } else {
           btn.innerText = "EQUIP";
           btn.classList.add('owned');
           btn.classList.remove('equipped');
@@ -190,46 +233,39 @@
     });
   }
 
-  // 4. Main Click Logic
+  // 4. Main Click Handler
   document.querySelectorAll('.buy-btn').forEach(button => {
     button.addEventListener('click', function() {
       const itemUrl = this.getAttribute('data-new-avatar');
       const price = parseInt(this.getAttribute('data-price'));
 
-      // SCENARIO A: Item is NOT owned yet (Try to Buy)
+      // DEBUGGING: Check the URL in console to see if it looks right
+      console.log("Attempting to switch avatar to:", itemUrl);
+
+      // SCENARIO A: Buy New Item
       if (!ownedItems.has(itemUrl)) {
         if (currentCredits >= price) {
-          // Success: Buy it
           currentCredits -= price;
-          creditsDisplay.innerText = currentCredits; // Update UI
+          creditsDisplay.innerText = currentCredits;
           
-          ownedItems.add(itemUrl); // Mark as owned
-          
-          // Auto-equip the new item
+          ownedItems.add(itemUrl);
           currentEquippedUrl = itemUrl;
-          mainAvatar.src = itemUrl;
-          
-          updateButtons(); // Refresh all button texts
+          mainAvatar.src = itemUrl; // This lines changes the image
+          updateButtons();
         } else {
-          // Fail: Not enough money
           showToast("Insufficient Credits!");
         }
       } 
-      
-      // SCENARIO B: Item IS owned
+      // SCENARIO B: Equip/Unequip
       else {
-        // If it's already equipped -> UNEQUIP it
         if (currentEquippedUrl === itemUrl) {
           currentEquippedUrl = null;
-          mainAvatar.src = baseAvatarUrl; // Revert to base
-          updateButtons();
-        } 
-        // If it's owned but not equipped -> EQUIP it
-        else {
+          mainAvatar.src = baseAvatarUrl;
+        } else {
           currentEquippedUrl = itemUrl;
           mainAvatar.src = itemUrl;
-          updateButtons();
         }
+        updateButtons();
       }
     });
   });
