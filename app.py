@@ -231,19 +231,20 @@ def setworkout():
         dob_row = db.execute(
             "SELECT dob FROM profiles WHERE user_id = ?", (current_user.id,)
         ).fetchone()
-
-
+        dob = datetime.strptime(dob_row["dob"], "%Y-%m-%d")
+        today = datetime.today()
+        age = today.year - dob.year
+        print(age)
         response = requests.get(
             f"https://ippt.vercel.app/api?age={age}&situps={situp}&pushups={pushup}&run={run}"
         )
-        print(response)
 
         if response.status_code == 200:
             data = response.json()
             score = data.get("points")  # the API returns total points
             grade = data.get("grade")   # Gold/Silver/Pass/Fail
         else:
-            return f"Error fetching IPPT score: {response.status_code}"
+            return f"Error fetching IPPT score: {response.status_code}, {age}, {response}"
 
         # db.execute(
         #     """
