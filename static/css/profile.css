@@ -3,9 +3,9 @@
   min-height: 100vh;
 
   /* Update this path to your real file:
-     Example: /static/images/track-bg.jpg
+     Example: /static/images/backgrounds/track.png
   */
-  background-image: url("/static/home_backgrnd/Track.png");
+  background-image: url("/static/images/backgrounds/track.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

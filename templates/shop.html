@@ -3,7 +3,7 @@
 {% block title %}Shop{% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/shop.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -17,11 +17,11 @@
       <div class="topbar-center">
 
         <!-- ===== Banner Title ===== -->
-        <!-- Put your banner image at: static/ui/shop_banner.png -->
+        <!-- Put your banner image at: static/images/shop/banner.png -->
         <div class="shop-banner">
           <img
             class="shop-banner__img"
-            src="{{ url_for('static', filename='ui/shop_banner.png') }}"
+            src="{{ url_for('static', filename='images/shop/banner.png') }}"
             alt="Shop banner"
           >
           <div class="shop-banner__content">
@@ -64,12 +64,12 @@
 
     <div class="shop-grid shop-grid--game">
       {% for name, desc, img_path, price, avatar_path in [
-        ("Headband", "Keeps sweat off", "items/headband.png", 50, "avatar/headband.png"),
-        ("Headphones", "Workout soundtrack", "items/headphones.png", 180, "avatar/headphone.png"),
-        ("Wristband", "Grip & comfort", "items/wristband.png", 60, "avatar/wristband.png"),
-        ("Sports Watch", "Track your runs", "items/watch.png", 220, "avatar/watch.png"),
-        ("Nike T-Shirt", "Classic training fit", "items/nikeshirt.png", 140, "avatar/nikeshirt.png"),
-        ("Nike Singlet", "Light & breathable", "items/nikesinglet.png", 130, "avatar/nikesinglet.png")
+        ("Headband", "Keeps sweat off", "images/shop/items/headband.png", 50, "avatar/headband.png"),
+        ("Headphones", "Workout soundtrack", "images/shop/items/headphones.png", 180, "avatar/headphone.png"),
+        ("Wristband", "Grip & comfort", "images/shop/items/wristband.png", 60, "avatar/wristband.png"),
+        ("Sports Watch", "Track your runs", "images/shop/items/watch.png", 220, "avatar/watch.png"),
+        ("Nike T-Shirt", "Classic training fit", "images/shop/items/nikeshirt.png", 140, "avatar/nikeshirt.png"),
+        ("Nike Singlet", "Light & breathable", "images/shop/items/nikesinglet.png", 130, "avatar/nikesinglet.png")
       ] %}
 
       <div class="shop-tile">

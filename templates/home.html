@@ -3,7 +3,7 @@
 {% block title %}Home{% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="../static/dashboard.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -105,7 +105,7 @@
         {# Badge overlay image (separate element, on top-right) #}
         {% if badge_file %}
           <img
-            src="{{ url_for('static', filename='home_backgrnd/' ~ badge_file) }}"
+            src="{{ url_for('static', filename='images/badges/' ~ badge_file) }}"
             alt="IPPT badge"
             class="ippt-badge"
           >

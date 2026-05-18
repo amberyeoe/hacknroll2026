@@ -1,7 +1,7 @@
 /* ===== Background ===== */
 .workout-bg {
   min-height: 100vh;
-  background-image: url("home_backgrnd/Track.png");
+  background-image: url("/static/images/backgrounds/track.png");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -342,14 +342,14 @@
 
 /* During 60s countdown: switch backgrounds per test */
 .fs-overlay.countdown-pu {
-  background-image: url("workout/pushup.jpg");
+  background-image: url("/static/images/workout/pushup.jpg");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
 }
 
 .fs-overlay.countdown-su {
-  background-image: url("workout/situp.jpg");
+  background-image: url("/static/images/workout/situp.jpg");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;

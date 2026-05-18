@@ -3,7 +3,7 @@
 {% block title %}Workout{% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="../static/workout.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/workout.css') }}">
 {% endblock %}
 
 {% block content %}

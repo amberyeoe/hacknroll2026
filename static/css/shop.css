@@ -24,7 +24,7 @@ body{
 ========================= */
 .workout-bg{
   min-height: 100vh;
-  background-image: url("/static/home_backgrnd/Track.png");
+  background-image: url("/static/images/backgrounds/track.png");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
