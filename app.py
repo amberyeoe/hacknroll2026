@@ -10,6 +10,73 @@ app.secret_key = "dev-secret-key"
 
 DATABASE = "database.db"
 
+SHOP_ITEMS = [
+    {
+        "key": "headband",
+        "name": "Headband",
+        "desc": "Keeps sweat off",
+        "price": 50,
+        "category": "accessory",
+        "preview_image": "images/shop/items/headband.png",
+    },
+    {
+        "key": "headphones",
+        "name": "Headphones",
+        "desc": "Workout soundtrack",
+        "price": 180,
+        "category": "accessory",
+        "preview_image": "images/shop/items/headphones.png",
+    },
+    {
+        "key": "wristband",
+        "name": "Wristband",
+        "desc": "Grip & comfort",
+        "price": 60,
+        "category": "accessory",
+        "preview_image": "images/shop/items/wristband.png",
+    },
+    {
+        "key": "watch",
+        "name": "Sports Watch",
+        "desc": "Track your runs",
+        "price": 220,
+        "category": "accessory",
+        "preview_image": "images/shop/items/watch.png",
+    },
+    {
+        "key": "nikeshirt",
+        "name": "Nike T-Shirt",
+        "desc": "Classic training fit",
+        "price": 140,
+        "category": "top",
+        "preview_image": "images/shop/items/nikeshirt.png",
+    },
+    {
+        "key": "nikesinglet",
+        "name": "Nike Singlet",
+        "desc": "Light & breathable",
+        "price": 130,
+        "category": "top",
+        "preview_image": "images/shop/items/nikesinglet.png",
+    },
+]
+
+SHOP_ITEM_ORDER = [item["key"] for item in SHOP_ITEMS]
+SHOP_ITEM_BY_KEY = {item["key"]: item for item in SHOP_ITEMS}
+SHOP_ITEM_CATEGORIES = {item["key"]: item["category"] for item in SHOP_ITEMS}
+TOP_ITEM_KEYS = {
+    item["key"] for item in SHOP_ITEMS if item["category"] == "top"
+}
+ITEM_KEY_ALIASES = {
+    "headband": "headband",
+    "headphones": "headphones",
+    "headphone": "headphones",
+    "wristband": "wristband",
+    "watch": "watch",
+    "nikeshirt": "nikeshirt",
+    "nikesinglet": "nikesinglet",
+}
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login_page"
@@ -37,6 +104,61 @@ def get_db():
         db = g._database = sqlite3.connect(DATABASE)
         db.row_factory = sqlite3.Row
     return db
+
+def item_keys_from_value(value):
+    if not value:
+        return []
+
+    raw_value = str(value).replace("\\", "/").lower()
+    if raw_value in SHOP_ITEM_BY_KEY:
+        return [raw_value]
+
+    filename = raw_value.rsplit("/", 1)[-1]
+    stem = filename.rsplit(".", 1)[0]
+    if "__" in stem:
+        return [
+            ITEM_KEY_ALIASES[item_key]
+            for item_key in stem.split("__")
+            if item_key in ITEM_KEY_ALIASES
+        ]
+
+    item_key = ITEM_KEY_ALIASES.get(stem)
+    return [item_key] if item_key else []
+
+def normalize_item_key(value):
+    keys = item_keys_from_value(value)
+    return keys[0] if keys else None
+
+def normalize_item_keys(values):
+    normalized = []
+    seen = set()
+    selected_top = None
+
+    for value in values or []:
+        for key in item_keys_from_value(value):
+            if not key:
+                continue
+
+            if key in TOP_ITEM_KEYS:
+                if selected_top and selected_top in seen:
+                    normalized = [item_key for item_key in normalized if item_key != selected_top]
+                    seen.remove(selected_top)
+                selected_top = key
+
+            if key not in seen:
+                normalized.append(key)
+                seen.add(key)
+
+    return [key for key in SHOP_ITEM_ORDER if key in seen]
+
+def avatar_filename_for_items(item_keys):
+    normalized = normalize_item_keys(item_keys)
+    if not normalized:
+        return "avatar/default.jpg"
+    return "avatar/combinations/" + "__".join(normalized) + ".png"
+
+def avatar_path_for_items(item_keys):
+    return "/static/" + avatar_filename_for_items(item_keys)
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -89,6 +211,14 @@ def create_tables():
     #ITEMS OWNED TABLES
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS owned_items (
+        user_id INTEGER,
+        item_path TEXT,
+        PRIMARY KEY (user_id, item_path),
+        FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS equipped_items (
         user_id INTEGER,
         item_path TEXT,
         PRIMARY KEY (user_id, item_path),
@@ -265,19 +395,39 @@ def shop():
         FROM profiles
         WHERE user_id = ?
     """, (current_user.id,)).fetchone()
+    if not profile:
+        return redirect(url_for("onboarding"))
 
     owned = db.execute("""
         SELECT item_path FROM owned_items
         WHERE user_id = ?
     """, (current_user.id,)).fetchall()
 
-    owned_items = [row["item_path"] for row in owned]
+    equipped = db.execute("""
+        SELECT item_path FROM equipped_items
+        WHERE user_id = ?
+    """, (current_user.id,)).fetchall()
+
+    owned_items = normalize_item_keys(row["item_path"] for row in owned)
+    equipped_items = normalize_item_keys(row["item_path"] for row in equipped)
+    if not equipped_items:
+        equipped_items = normalize_item_keys([profile["avatar_path"]])
+
+    for item_key in equipped_items:
+        if item_key not in owned_items:
+            owned_items.append(item_key)
+
+    avatar_path = avatar_path_for_items(equipped_items)
 
     return render_template(
         "shop.html",
         credits=profile["credits"],
-        avatar_path=profile["avatar_path"],
-        owned_items=owned_items
+        avatar_path=avatar_path,
+        owned_items=owned_items,
+        equipped_items=equipped_items,
+        shop_items=SHOP_ITEMS,
+        item_order=SHOP_ITEM_ORDER,
+        item_categories=SHOP_ITEM_CATEGORIES
     )
 
 
@@ -285,11 +435,21 @@ def shop():
 @app.route("/shop/save", methods=["POST"])
 @login_required
 def save_shop():
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
 
-    credits = data.get("credits")
-    avatar_path = data.get("avatar_path")
-    owned_items = data.get("owned_items", [])
+    try:
+        credits = int(data.get("credits", 0))
+    except (TypeError, ValueError):
+        return jsonify({"message": "Invalid credits"}), 400
+
+    owned_items = normalize_item_keys(data.get("owned_items", []))
+    equipped_items = normalize_item_keys(data.get("equipped_items", []))
+
+    for item_key in equipped_items:
+        if item_key not in owned_items:
+            owned_items.append(item_key)
+
+    avatar_path = avatar_path_for_items(equipped_items)
 
     db = get_db()
 
@@ -300,7 +460,7 @@ def save_shop():
         WHERE user_id = ?
     """, (credits, avatar_path, current_user.id))
 
-    # Replace owned items
+    # Replace owned/equipped items
     db.execute("DELETE FROM owned_items WHERE user_id = ?", (current_user.id,))
     for item in owned_items:
         db.execute("""
@@ -308,17 +468,31 @@ def save_shop():
             VALUES (?, ?)
         """, (current_user.id, item))
 
+    db.execute("DELETE FROM equipped_items WHERE user_id = ?", (current_user.id,))
+    for item in equipped_items:
+        db.execute("""
+            INSERT INTO equipped_items (user_id, item_path)
+            VALUES (?, ?)
+        """, (current_user.id, item))
+
     db.commit()
-    return "Saved", 200
+    return jsonify({"avatar_path": avatar_path}), 200
 
 
 
 @app.route("/purchase_items", methods=["POST"]) #888
 @login_required
 def purchase_items():
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     avatar_path = data.get("avatar_path")
-    price = int(data.get("price", 0))
+    try:
+        price = int(data.get("price", 0))
+    except (TypeError, ValueError):
+        return jsonify({"success": False, "message": "Invalid price"}), 400
+
+    item_key = normalize_item_key(avatar_path)
+    if not item_key:
+        return jsonify({"success": False, "message": "Invalid item"}), 400
 
     db = get_db()
 
@@ -338,7 +512,25 @@ def purchase_items():
         (new_credits, current_user.id)
     )
 
-    # Update avatar_path (or mark as owned)
+    equipped = db.execute("""
+        SELECT item_path FROM equipped_items
+        WHERE user_id = ?
+    """, (current_user.id,)).fetchall()
+    equipped_items = normalize_item_keys([row["item_path"] for row in equipped] + [item_key])
+    avatar_path = avatar_path_for_items(equipped_items)
+
+    db.execute("""
+        INSERT OR IGNORE INTO owned_items (user_id, item_path)
+        VALUES (?, ?)
+    """, (current_user.id, item_key))
+
+    db.execute("DELETE FROM equipped_items WHERE user_id = ?", (current_user.id,))
+    for equipped_item in equipped_items:
+        db.execute("""
+            INSERT INTO equipped_items (user_id, item_path)
+            VALUES (?, ?)
+        """, (current_user.id, equipped_item))
+
     db.execute(
         "UPDATE profiles SET avatar_path = ? WHERE user_id = ?",
         (avatar_path, current_user.id)
@@ -346,7 +538,7 @@ def purchase_items():
 
     db.commit()
 
-    return jsonify({"success": True, "credits": new_credits})
+    return jsonify({"success": True, "credits": new_credits, "avatar_path": avatar_path})
 
 @app.route("/tracker")
 @login_required
@@ -573,9 +765,9 @@ def profile():
 
     return render_template("profile.html", user=user)
 
+with app.app_context():
+    create_tables()
 
 
 if __name__ == "__main__":
-    with app.app_context():
-        create_tables()
     app.run(host="0.0.0.0", debug=True)

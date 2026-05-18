@@ -41,13 +41,11 @@
       <div class="avatar-card">
         <div class="tier-badge tier-badge--{{ tier|lower }}">
           {{ tier }}
-      </div>
-
-      
+        </div>
 
         <div class="avatar-wrap">
           <img id="main-avatar"
-               src="{{ url_for('static', filename='avatar/default.jpg') }}"
+               src="{{ avatar_path }}"
                data-base-src="{{ url_for('static', filename='avatar/default.jpg') }}"
                class="avatar-img"
                alt="Your Avatar">
@@ -63,27 +61,21 @@
     </div>
 
     <div class="shop-grid shop-grid--game">
-      {% for name, desc, img_path, price, avatar_path in [
-        ("Headband", "Keeps sweat off", "images/shop/items/headband.png", 50, "avatar/headband.png"),
-        ("Headphones", "Workout soundtrack", "images/shop/items/headphones.png", 180, "avatar/headphone.png"),
-        ("Wristband", "Grip & comfort", "images/shop/items/wristband.png", 60, "avatar/wristband.png"),
-        ("Sports Watch", "Track your runs", "images/shop/items/watch.png", 220, "avatar/watch.png"),
-        ("Nike T-Shirt", "Classic training fit", "images/shop/items/nikeshirt.png", 140, "avatar/nikeshirt.png"),
-        ("Nike Singlet", "Light & breathable", "images/shop/items/nikesinglet.png", 130, "avatar/nikesinglet.png")
-      ] %}
+      {% for item in shop_items %}
 
       <div class="shop-tile">
         <div class="tile-inner">
-          <img src="{{ url_for('static', filename=img_path) }}" class="tile-img" alt="{{ name }}">
-          <div class="tile-name">{{ name }}</div>
-          <div class="tile-desc">{{ desc }}</div>
+          <img src="{{ url_for('static', filename=item.preview_image) }}" class="tile-img" alt="{{ item.name }}">
+          <div class="tile-name">{{ item.name }}</div>
+          <div class="tile-desc">{{ item.desc }}</div>
         </div>
 
         <div class="tile-footer">
-          <div class="tile-price">🪙 {{ price }}</div>
+          <div class="tile-price">&#129689; {{ item.price }}</div>
           <button class="buy-btn" type="button"
-                  data-price="{{ price }}"
-                  data-new-avatar="{{ url_for('static', filename=avatar_path) }}">
+                  data-item-key="{{ item.key }}"
+                  data-category="{{ item.category }}"
+                  data-price="{{ item.price }}">
             BUY
           </button>
         </div>
@@ -91,8 +83,6 @@
 
       {% endfor %}
     </div>
-
-    
 
   </div>
 </div>
@@ -103,31 +93,15 @@
   let currentCredits = parseInt(document.getElementById('user-credits').innerText || "0", 10);
 
   const ownedItems = new Set({{ owned_items|tojson if owned_items is defined else [] }});
-  const equippedItems = new Set();
+  const equippedItems = new Set({{ equipped_items|tojson if equipped_items is defined else [] }});
+  const itemOrder = {{ item_order|tojson }};
+  const itemCategories = {{ item_categories|tojson }};
 
   const creditsDisplay = document.getElementById('user-credits');
   const mainAvatar = document.getElementById('main-avatar');
   const baseAvatarUrl = mainAvatar.dataset.baseSrc;
+  const combinationBaseUrl = "{{ url_for('static', filename='avatar/combinations/') }}";
   const toast = document.getElementById('error-toast');
-
-  // ===== Load saved avatar and auto-equip =====
-  const savedAvatarFull = "{{ avatar_path if avatar_path is defined else '' }}";
-
-  let savedAvatarFile = "";
-  if (savedAvatarFull) {
-    savedAvatarFile = savedAvatarFull.split("/").pop();
-  }
-
-  document.querySelectorAll('.buy-btn').forEach(btn => {
-    const itemUrl = btn.getAttribute('data-new-avatar');
-    const itemFile = itemUrl.split("/").pop();
-
-    if (itemFile === savedAvatarFile) {
-      equippedItems.add(itemUrl);
-      ownedItems.add(itemUrl);
-      mainAvatar.src = itemUrl;
-    }
-  });
 
   // ===== Toast =====
   function showToast(message) {
@@ -137,24 +111,42 @@
   }
 
   // ===== Avatar preview helper =====
-  function syncAvatarPreview(preferUrl) {
-    if (preferUrl && equippedItems.has(preferUrl)) {
-      mainAvatar.src = preferUrl;
-      return;
+  function orderedKeys(items) {
+    return itemOrder.filter(key => items.has(key));
+  }
+
+  function avatarPathFor(items) {
+    const keys = orderedKeys(items);
+    if (keys.length === 0) {
+      return baseAvatarUrl;
     }
-    const any = equippedItems.values().next().value;
-    mainAvatar.src = any ? any : baseAvatarUrl;
+    return `${combinationBaseUrl}${keys.join("__")}.png`;
+  }
+
+  function equipItem(itemKey) {
+    if (itemCategories[itemKey] === "top") {
+      itemOrder.forEach(key => {
+        if (key !== itemKey && itemCategories[key] === "top") {
+          equippedItems.delete(key);
+        }
+      });
+    }
+    equippedItems.add(itemKey);
+  }
+
+  function syncAvatarPreview() {
+    mainAvatar.src = avatarPathFor(equippedItems);
   }
 
   // ===== Buttons =====
   function updateButtons() {
     document.querySelectorAll('.buy-btn').forEach(btn => {
-      const itemUrl = btn.getAttribute('data-new-avatar');
+      const itemKey = btn.dataset.itemKey;
 
-      if (!ownedItems.has(itemUrl)) {
+      if (!ownedItems.has(itemKey)) {
         btn.innerText = "BUY";
         btn.classList.remove('owned', 'equipped');
-      } else if (equippedItems.has(itemUrl)) {
+      } else if (equippedItems.has(itemKey)) {
         btn.innerText = "UNEQUIP";
         btn.classList.add('equipped');
         btn.classList.remove('owned');
@@ -169,11 +161,11 @@
   // ===== Click handler =====
   document.querySelectorAll('.buy-btn').forEach(button => {
     button.addEventListener('click', function() {
-      const itemUrl = this.getAttribute('data-new-avatar');
-      const price = parseInt(this.getAttribute('data-price') || "0", 10);
+      const itemKey = this.dataset.itemKey;
+      const price = parseInt(this.dataset.price || "0", 10);
 
       // A) BUY new item (auto-equip)
-      if (!ownedItems.has(itemUrl)) {
+      if (!ownedItems.has(itemKey)) {
         if (currentCredits < price) {
           showToast("Insufficient Credits!");
           return;
@@ -182,45 +174,46 @@
         currentCredits -= price;
         creditsDisplay.innerText = currentCredits;
 
-        ownedItems.add(itemUrl);
-        equippedItems.add(itemUrl);
-        syncAvatarPreview(itemUrl);
+        ownedItems.add(itemKey);
+        equipItem(itemKey);
+        syncAvatarPreview();
         updateButtons();
         return;
       }
 
       // B) Toggle EQUIP / UNEQUIP
-      if (equippedItems.has(itemUrl)) {
-        equippedItems.delete(itemUrl);
-        if (mainAvatar.src.includes(itemUrl)) {
-          syncAvatarPreview(null);
-        }
+      if (equippedItems.has(itemKey)) {
+        equippedItems.delete(itemKey);
       } else {
-        equippedItems.add(itemUrl);
-        syncAvatarPreview(itemUrl);
+        equipItem(itemKey);
       }
 
+      syncAvatarPreview();
       updateButtons();
     });
   });
 
   // ===== Save =====
   document.getElementById("save-avatar").addEventListener("click", async () => {
-    const equippedArray = Array.from(equippedItems);
-    const ownedArray = Array.from(ownedItems);
+    const equippedArray = orderedKeys(equippedItems);
+    const ownedArray = orderedKeys(ownedItems);
 
     const res = await fetch("/shop/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         credits: currentCredits,
-        avatar_path: mainAvatar.src,
+        avatar_path: avatarPathFor(equippedItems),
         owned_items: ownedArray,
         equipped_items: equippedArray
       })
     });
 
     if (res.ok) {
+      const payload = await res.json();
+      if (payload.avatar_path) {
+        mainAvatar.src = payload.avatar_path;
+      }
       showToast("Saved successfully!");
     } else {
       showToast("Save failed.");
@@ -228,6 +221,7 @@
   });
 
   // Initial render
+  syncAvatarPreview();
   updateButtons();
 </script>
 
