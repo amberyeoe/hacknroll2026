@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const statusEl = document.getElementById(isPU ? "pu-status" : "su-status");
     const barEl = document.getElementById(isPU ? "pu-progress" : "su-progress");
 
-    const TOTAL = {{ workout_test_seconds | tojson }};
+    const TOTAL = 1; // change to 60 for production
     const startMs = Date.now();
     const endMs = startMs + TOTAL * 1000;
 

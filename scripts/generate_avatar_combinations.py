@@ -1,16 +1,21 @@
+from itertools import combinations
 from pathlib import Path
-import sys
 
 from PIL import Image, ImageChops, ImageFilter
 
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
-
-from shop_items import SHOP_ITEM_ORDER, valid_item_combinations
-
 AVATAR_DIR = ROOT / "static" / "avatar"
 OUTPUT_DIR = AVATAR_DIR / "combinations"
+
+ITEM_ORDER = [
+    "headband",
+    "headphones",
+    "wristband",
+    "watch",
+    "nikeshirt",
+    "nikesinglet",
+]
 
 LAYER_ORDER = [
     "nikeshirt",
@@ -20,6 +25,9 @@ LAYER_ORDER = [
     "wristband",
     "watch",
 ]
+
+TOP_ITEMS = ["nikeshirt", "nikesinglet"]
+ACCESSORY_ITEMS = ["headband", "headphones", "wristband", "watch"]
 
 ITEMS = {
     "headband": {
@@ -132,17 +140,19 @@ def selected_component_mask(base, image, config):
 
 
 def combo_filename(keys):
-    ordered = [key for key in SHOP_ITEM_ORDER if key in keys]
+    ordered = [key for key in ITEM_ORDER if key in keys]
     return "__".join(ordered) + ".png"
 
 
-def save_composite(image, path):
-    quantized = image.convert("RGB").quantize(
-        colors=128,
-        method=Image.Quantize.MEDIANCUT,
-        dither=Image.Dither.FLOYDSTEINBERG,
-    )
-    quantized.save(path, optimize=True)
+def valid_combinations():
+    for top_item in [None, *TOP_ITEMS]:
+        for count in range(len(ACCESSORY_ITEMS) + 1):
+            for accessory_keys in combinations(ACCESSORY_ITEMS, count):
+                keys = list(accessory_keys)
+                if top_item:
+                    keys.append(top_item)
+                if keys:
+                    yield [key for key in ITEM_ORDER if key in keys]
 
 
 def main():
@@ -161,7 +171,7 @@ def main():
         old_file.unlink()
 
     generated = 0
-    for keys in valid_item_combinations():
+    for keys in valid_combinations():
         composite = base.convert("RGBA")
 
         for key in LAYER_ORDER:
@@ -171,7 +181,7 @@ def main():
             layer.putalpha(masks[key])
             composite = Image.alpha_composite(composite, layer)
 
-        save_composite(composite, OUTPUT_DIR / combo_filename(keys))
+        composite.convert("RGB").save(OUTPUT_DIR / combo_filename(keys), optimize=True)
         generated += 1
 
     print(f"Generated {generated} avatar combinations in {OUTPUT_DIR}")
