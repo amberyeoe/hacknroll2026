@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, url_for, redirect, g, request, jsonify
 import sqlite3
+import os
+import secrets
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user      
 from werkzeug.security import generate_password_hash, check_password_hash  
 from datetime import datetime       
 import requests       
 
 app = Flask(__name__)
-app.secret_key = "dev-secret-key"
+app.secret_key = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
 
 DATABASE = "database.db"
 
